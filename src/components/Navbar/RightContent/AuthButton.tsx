@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { Button } from "@chakra-ui/react";
 
 type AuthButtonProps = {
-  // onClick
+  onClick: () => void;
   children: ReactNode;
   variant?: "solid" | "outline" | "oauth";
 };
@@ -10,6 +10,7 @@ type AuthButtonProps = {
 const AuthButton: React.FC<AuthButtonProps> = ({
   children,
   variant = "solid",
+  onClick,
   ...rest
 }) => {
   return (
@@ -20,6 +21,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({
       width={{ base: "70px", md: "110px" }}
       mr={2}
       {...rest}
+      onClick={onClick}
     >
       {children}
     </Button>
