@@ -1,20 +1,42 @@
-import React, { useState } from "react";
-import { Button, Flex, Text } from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import { Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+import { auth } from "../../../firebase/clientApp";
 import { loginSchema } from "../../../helpers/authSchema";
 import { IAUthInput } from "./Auth.interface";
 
 import MyInput from "../../elements/MyInput";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../../atoms/authModalAtom";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 const Login: React.FC = () => {
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
+
   const [showPassword, setShowPassword] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
+  const toast = useToast();
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        position: "top-right",
+        title: "Login Error",
+        description:
+          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, [error]);
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
@@ -36,8 +58,9 @@ const Login: React.FC = () => {
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit: SubmitHandler<IAUthInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IAUthInput> = async (data) => {
+    const { email, password } = data;
+    await signInWithEmailAndPassword(email, password);
     reset();
   };
 
@@ -71,6 +94,7 @@ const Login: React.FC = () => {
           height="36px"
           mt={2}
           mb={2}
+          isLoading={loading}
         >
           {" "}
           Log in

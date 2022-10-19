@@ -1,23 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  useCreateUserWithEmailAndPassword,
+  useUpdateProfile,
+} from "react-firebase-hooks/auth";
+
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { AiOutlineUser } from "react-icons/ai";
+import { useToast } from "@chakra-ui/react";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 
+import { auth } from "../../../firebase/clientApp";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import { authModalState } from "../../../atoms/authModalAtom";
 import { registerSchema } from "../../../helpers/authSchema";
+
 import { IAUthInput } from "./Auth.interface";
 
 import MyInput from "../../elements/MyInput";
 
 const SignUp: React.FC = () => {
+  const [createUserWithEmailAndPassword, user, loading, error] =
+    useCreateUserWithEmailAndPassword(auth);
+  const [updateProfile, updating] = useUpdateProfile(auth);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const setAuthModalState = useSetRecoilState(authModalState);
+
+  const toast = useToast();
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        position: "top-right",
+        title: "Sign Up Error",
+        description:
+          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
@@ -43,8 +75,13 @@ const SignUp: React.FC = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit: SubmitHandler<IAUthInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IAUthInput> = async (data) => {
+    const { email, password, firstName, lastName } = data;
+    try {
+      await createUserWithEmailAndPassword(email, password);
+      await updateProfile({ displayName: `${firstName} ${lastName}` });
+    } catch (err) {}
+
     reset();
   };
 
@@ -105,6 +142,7 @@ const SignUp: React.FC = () => {
           height="36px"
           mt={2}
           mb={2}
+          isLoading={loading || updating}
         >
           {" "}
           Sign Up
@@ -119,7 +157,7 @@ const SignUp: React.FC = () => {
           cursor="pointer"
           onClick={handleAuthModal}
         >
-          Login
+          Log in
         </Text>
       </Flex>
     </>

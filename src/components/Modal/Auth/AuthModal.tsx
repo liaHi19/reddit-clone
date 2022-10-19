@@ -1,7 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
-  useDisclosure,
-  Button,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -13,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useRecoilState } from "recoil";
+import { useAuth } from "../../../firebase/useAuth";
 
 import { authModalState } from "../../../atoms/authModalAtom";
 import AuthInputs from "./AuthInputs";
@@ -22,10 +21,18 @@ type AuthModalProps = {};
 
 const AuthModal: React.FC<AuthModalProps> = () => {
   const [modalState, setModalState] = useRecoilState(authModalState);
+  const { user, loading, error } = useAuth();
 
   const hideAuthModal = () => {
     setModalState((prev) => ({ ...prev, open: false }));
   };
+
+  useEffect(() => {
+    if (user) {
+      hideAuthModal();
+    }
+  }, [user]);
+
   return (
     <>
       <Modal isOpen={modalState.open} onClose={hideAuthModal}>
