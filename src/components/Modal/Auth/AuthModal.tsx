@@ -8,14 +8,15 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   Flex,
+  Text,
 } from "@chakra-ui/react";
 
 import { useRecoilState } from "recoil";
 
 import { authModalState } from "../../../atoms/authModalAtom";
 import AuthInputs from "./AuthInputs";
+import OAuthButtons from "./OAuthButtons";
 
 type AuthModalProps = {};
 
@@ -51,7 +52,10 @@ const AuthModal: React.FC<AuthModalProps> = () => {
               justify="center"
               width="90%"
             >
-              {/* <OAuthButtons /> */}
+              <OAuthButtons />
+              <Text color="gray.400" fontWeight={700} textTransform="uppercase">
+                or
+              </Text>
               <AuthInputs />
               {/* <ResetPassword /> */}
             </Flex>
