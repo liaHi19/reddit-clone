@@ -6,6 +6,7 @@ import { useAuth } from "../../../firebase/useAuth";
 
 import AuthButtons from "./AuthButtons";
 import AuthModal from "../../Modal/Auth/AuthModal";
+import Icons from "./Icons";
 
 const RightContent: React.FC = () => {
   const { user, loading, error, logOut } = useAuth();
@@ -13,7 +14,8 @@ const RightContent: React.FC = () => {
     <>
       <AuthModal />
       <Flex align="center" justify="center">
-        {user ? <Button onClick={logOut}>Log out</Button> : <AuthButtons />}
+        {user ? <Icons /> : <AuthButtons />}
+        {/* <Menu /> */}
       </Flex>
     </>
   );
