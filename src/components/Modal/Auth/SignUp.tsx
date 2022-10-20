@@ -16,7 +16,7 @@ import { useSetRecoilState } from "recoil";
 
 import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
-import { authModalState } from "../../../atoms/authModalAtom";
+import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { registerSchema } from "../../../helpers/authSchema";
 
 import { IAUthInput } from "./Auth.interface";
@@ -59,12 +59,13 @@ const SignUp: React.FC = () => {
     setShowConfirmPassword((prev) => !prev);
   };
 
-  const handleAuthModal = () => {
+  const handleAuth = (name: IView) => {
     setAuthModalState((prev) => ({
       ...prev,
-      view: "login",
+      view: name,
     }));
   };
+
   const {
     register,
     handleSubmit,
@@ -155,7 +156,9 @@ const SignUp: React.FC = () => {
           textTransform="uppercase"
           fontWeight={700}
           cursor="pointer"
-          onClick={handleAuthModal}
+          onClick={() => {
+            handleAuth("login");
+          }}
         >
           Log in
         </Text>

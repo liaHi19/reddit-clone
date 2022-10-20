@@ -5,7 +5,7 @@ import { Flex, Icon, Input, Button, Text } from "@chakra-ui/react";
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 
 import { useSetRecoilState } from "recoil";
-import { authModalState } from "../../../atoms/authModalAtom";
+import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
 
 type ResetPasswordProps = {};
@@ -24,6 +24,13 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
 
     await sendPasswordResetEmail(email);
     setSuccess(true);
+  };
+
+  const handleAuth = (name: IView) => {
+    setAuthModalState((prev) => ({
+      ...prev,
+      view: name,
+    }));
   };
 
   return (
@@ -86,27 +93,9 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
         fontWeight={700}
         cursor="pointer"
       >
-        <Text
-          onClick={() =>
-            setAuthModalState((prev) => ({
-              ...prev,
-              view: "login",
-            }))
-          }
-        >
-          LOGIN
-        </Text>
+        <Text onClick={() => handleAuth("login")}>LOGIN</Text>
         <Icon as={BsDot} />
-        <Text
-          onClick={() =>
-            setAuthModalState((prev) => ({
-              ...prev,
-              view: "signup",
-            }))
-          }
-        >
-          SIGN UP
-        </Text>
+        <Text onClick={() => handleAuth("signup")}>SIGN UP</Text>
       </Flex>
     </Flex>
   );

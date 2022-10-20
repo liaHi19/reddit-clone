@@ -13,7 +13,7 @@ import { IAUthInput } from "./Auth.interface";
 
 import MyInput from "../../elements/MyInput";
 import { useSetRecoilState } from "recoil";
-import { authModalState } from "../../../atoms/authModalAtom";
+import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 const Login: React.FC = () => {
@@ -43,19 +43,13 @@ const Login: React.FC = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const handleAuthSignUp = () => {
+  const handleAuth = (name: IView) => {
     setAuthModalState((prev) => ({
       ...prev,
-      view: "signup",
+      view: name,
     }));
   };
 
-  const handleAuthReset = () => {
-    setAuthModalState((prev) => ({
-      ...prev,
-      view: "resetPassword",
-    }));
-  };
   const {
     register,
     handleSubmit,
@@ -116,7 +110,9 @@ const Login: React.FC = () => {
           fontSize="9pt"
           color="blue.500"
           cursor="pointer"
-          onClick={handleAuthReset}
+          onClick={() => {
+            handleAuth("resetPassword");
+          }}
         >
           Reset
         </Text>
@@ -128,7 +124,9 @@ const Login: React.FC = () => {
           textTransform="uppercase"
           fontWeight={700}
           cursor="pointer"
-          onClick={handleAuthSignUp}
+          onClick={() => {
+            handleAuth("signup");
+          }}
         >
           sign up
         </Text>
