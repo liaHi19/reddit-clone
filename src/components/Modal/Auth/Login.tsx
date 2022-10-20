@@ -36,16 +36,24 @@ const Login: React.FC = () => {
         isClosable: true,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const handleAuthModal = () => {
+  const handleAuthSignUp = () => {
     setAuthModalState((prev) => ({
       ...prev,
       view: "signup",
+    }));
+  };
+
+  const handleAuthReset = () => {
+    setAuthModalState((prev) => ({
+      ...prev,
+      view: "resetPassword",
     }));
   };
   const {
@@ -100,6 +108,19 @@ const Login: React.FC = () => {
           Log in
         </Button>
       </form>
+      <Flex justify="center" mb={2}>
+        <Text fontSize="9pt" mr={1}>
+          Forgot your password
+        </Text>
+        <Text
+          fontSize="9pt"
+          color="blue.500"
+          cursor="pointer"
+          onClick={handleAuthReset}
+        >
+          Reset
+        </Text>
+      </Flex>
       <Flex fontSize="9pt" justify="center">
         <Text mr={1}>New here?</Text>
         <Text
@@ -107,7 +128,7 @@ const Login: React.FC = () => {
           textTransform="uppercase"
           fontWeight={700}
           cursor="pointer"
-          onClick={handleAuthModal}
+          onClick={handleAuthSignUp}
         >
           sign up
         </Text>

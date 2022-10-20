@@ -16,6 +16,7 @@ import { useAuth } from "../../../firebase/useAuth";
 import { authModalState } from "../../../atoms/authModalAtom";
 import AuthInputs from "./AuthInputs";
 import OAuthButtons from "./OAuthButtons";
+import ResetPassword from "./ResetPassword";
 
 type AuthModalProps = {};
 
@@ -59,12 +60,22 @@ const AuthModal: React.FC<AuthModalProps> = () => {
               justify="center"
               width="90%"
             >
-              <OAuthButtons />
-              <Text color="gray.400" fontWeight={700} textTransform="uppercase">
-                or
-              </Text>
-              <AuthInputs />
-              {/* <ResetPassword /> */}
+              {modalState.view === "login" || modalState.view === "signup" ? (
+                <>
+                  {" "}
+                  <OAuthButtons />
+                  <Text
+                    color="gray.400"
+                    fontWeight={700}
+                    textTransform="uppercase"
+                  >
+                    or
+                  </Text>
+                  <AuthInputs />
+                </>
+              ) : (
+                <ResetPassword />
+              )}
             </Flex>
           </ModalBody>
         </ModalContent>
