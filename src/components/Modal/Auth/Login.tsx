@@ -43,10 +43,10 @@ const Login: React.FC = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const handleAuth = (name: IView) => {
+  const handleAuth = (view: IView) => {
     setAuthModalState((prev) => ({
       ...prev,
-      view: name,
+      view,
     }));
   };
 

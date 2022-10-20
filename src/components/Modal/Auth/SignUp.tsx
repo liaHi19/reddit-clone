@@ -59,10 +59,10 @@ const SignUp: React.FC = () => {
     setShowConfirmPassword((prev) => !prev);
   };
 
-  const handleAuth = (name: IView) => {
+  const handleAuth = (view: IView) => {
     setAuthModalState((prev) => ({
       ...prev,
-      view: name,
+      view,
     }));
   };
 

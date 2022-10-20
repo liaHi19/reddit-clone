@@ -1,35 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSetRecoilState } from "recoil";
+
 import { BsDot, BsReddit } from "react-icons/bs";
-import { Flex, Icon, Input, Button, Text } from "@chakra-ui/react";
+import { EmailIcon } from "@chakra-ui/icons";
+import { Flex, Icon, Button, Text, useToast } from "@chakra-ui/react";
 
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 
-import { useSetRecoilState } from "recoil";
 import { authModalState, IView } from "../../../atoms/authModalAtom";
+import { IAUthInput } from "./Auth.interface";
+
 import { auth } from "../../../firebase/clientApp";
+import { resetPassword } from "../../../helpers/authSchema";
+
+import MyInput from "../../elements/MyInput";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 type ResetPasswordProps = {};
 
 const ResetPassword: React.FC<ResetPasswordProps> = () => {
   const setAuthModalState = useSetRecoilState(authModalState);
 
-  const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
-
+  const toast = useToast();
   const [sendPasswordResetEmail, sending, error] =
     useSendPasswordResetEmail(auth);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (error) {
+      toast({
+        position: "top-right",
+        title: "Reset Password Error",
+        description:
+          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setSuccess(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
-    await sendPasswordResetEmail(email);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isValid },
+    reset,
+  } = useForm<IAUthInput>({
+    mode: "onChange",
+    resolver: yupResolver(resetPassword),
+  });
+
+  const onSubmit: SubmitHandler<IAUthInput> = async (data) => {
+    await sendPasswordResetEmail(data.email);
+    reset();
     setSuccess(true);
   };
 
-  const handleAuth = (name: IView) => {
+  const handleAuth = (view: IView) => {
     setAuthModalState((prev) => ({
       ...prev,
-      view: name,
+      view,
     }));
   };
 
@@ -47,32 +81,16 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
             Enter the email associated with your account and we will send you a
             reset link
           </Text>
-          <form onSubmit={onSubmit} style={{ width: "100%" }}>
-            <Input
-              required
+          <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+            <MyInput
               name="email"
-              placeholder="email"
+              {...register("email")}
+              label="Email"
               type="email"
-              mb={2}
-              onChange={(e) => setEmail(e.target.value)}
-              fontSize="10pt"
-              _placeholder={{ color: "gray.500" }}
-              _hover={{
-                bg: "white",
-                border: "1px solid",
-                borderColor: "blue.500",
-              }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "blue.500",
-              }}
-              bg="gray.50"
+              placeholder="Email"
+              leftIcon={<EmailIcon color="gray.400" />}
+              errorText={errors?.email?.message}
             />
-            <Text textAlign="center" fontSize="10pt" color="red">
-              {error?.message}
-            </Text>
             <Button
               width="100%"
               height="36px"
@@ -80,6 +98,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
               mt={2}
               type="submit"
               isLoading={sending}
+              disabled={!isDirty || !isValid}
             >
               Reset Password
             </Button>

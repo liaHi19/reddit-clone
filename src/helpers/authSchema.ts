@@ -43,3 +43,10 @@ export const registerSchema = yup.object({
     .oneOf([yup.ref("password"), null], "* The passwords should matches")
     .required("* Confirm password is required"),
 });
+
+export const resetPassword = yup.object({
+  email: yup
+    .string()
+    .email("* Email must be valid")
+    .required("* Email is required"),
+});
