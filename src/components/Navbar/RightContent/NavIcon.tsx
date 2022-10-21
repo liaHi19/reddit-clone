@@ -11,8 +11,7 @@ const NavIcon: React.FC<NavIconProps> = ({ icon, size, display }) => {
   return (
     <Flex
       display={display ? { base: "none", md: "flex" } : {}}
-      mr={1.5}
-      ml={1.5}
+      margin="0 3px"
       padding={1}
       cursor="pointer"
       borderRadius={4}

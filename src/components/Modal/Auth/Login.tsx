@@ -11,10 +11,11 @@ import { auth } from "../../../firebase/clientApp";
 import { loginSchema } from "../../../helpers/authSchema";
 import { IAUthInput } from "./Auth.interface";
 
-import MyInput from "../../elements/MyInput";
 import { useSetRecoilState } from "recoil";
 import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
+
+import MyInput from "../../elements/MyInput";
 
 const Login: React.FC = () => {
   const [signInWithEmailAndPassword, user, loading, error] =
@@ -22,6 +23,7 @@ const Login: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
+
   const toast = useToast();
 
   useEffect(() => {
