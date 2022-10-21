@@ -1,38 +1,50 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Flex, Button, Image, useToast } from "@chakra-ui/react";
 
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { auth } from "../../../firebase/clientApp";
+import { useAuth } from "../../../firebase/useAuth";
+import { createOrUpdateDoc } from "../../../firebase/firestore-helpers";
+import { serverTimestamp } from "firebase/firestore";
 
 const OAuthButtons: React.FC = () => {
-  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
-
+  const { signInWithGoogle, user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
-    if (error) {
+    if (user) {
+      const newUser = {
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        createdAt: serverTimestamp(),
+      };
+
+      createOrUpdateDoc("users", user.uid, newUser);
+    }
+  }, [user]);
+
+  const signIn = async () => {
+    try {
+      setLoading(true);
+      await signInWithGoogle();
+      setLoading(false);
+    } catch (error: any) {
+      console.log("Google SignIn Error", error);
+      setLoading(false);
       toast({
         position: "top-right",
         title: "Google Auth Error",
-        description: error?.message,
+        description: "Something went wrong with Google registration",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
+  };
 
   return (
     <Flex direction="column" width="100%" mb={4}>
-      <Button
-        variant="oauth"
-        mb={2}
-        onClick={async () => {
-          await signInWithGoogle();
-        }}
-        isLoading={loading}
-      >
+      <Button variant="oauth" mb={2} onClick={signIn} isLoading={loading}>
         <Image
           src="/images/googlelogo.png"
           alt="google logo"

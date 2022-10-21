@@ -1,32 +1,29 @@
-import React, { useState, useEffect } from "react";
-import {
-  useCreateUserWithEmailAndPassword,
-  useUpdateProfile,
-} from "react-firebase-hooks/auth";
+import React, { useState } from "react";
 
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { AiOutlineUser } from "react-icons/ai";
 import { useToast } from "@chakra-ui/react";
 
-import { yupResolver } from "@hookform/resolvers/yup";
-
 import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useSetRecoilState } from "recoil";
+import { serverTimestamp } from "firebase/firestore";
 
-import { auth } from "../../../firebase/clientApp";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import { authModalState, IView } from "../../../atoms/authModalAtom";
+
 import { registerSchema } from "../../../helpers/authSchema";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
+import { createOrUpdateDoc } from "../../../firebase/firestore-helpers";
+import { useAuth } from "../../../firebase/useAuth";
 
 import { IAUthInput } from "./Auth.interface";
 
 import MyInput from "../../elements/MyInput";
 
 const SignUp: React.FC = () => {
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth);
-  const [updateProfile, updating] = useUpdateProfile(auth);
+  const { createUser } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,22 +31,6 @@ const SignUp: React.FC = () => {
   const setAuthModalState = useSetRecoilState(authModalState);
 
   const toast = useToast();
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        position: "top-right",
-        title: "Sign Up Error",
-        description:
-          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
@@ -77,11 +58,33 @@ const SignUp: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<IAUthInput> = async (data) => {
-    const { email, password, firstName, lastName } = data;
     try {
-      await createUserWithEmailAndPassword(email, password);
-      await updateProfile({ displayName: `${firstName} ${lastName}` });
-    } catch (err) {}
+      setLoading(true);
+      const userCred = await createUser(data);
+
+      const newUser = {
+        displayName: userCred.displayName,
+        email: data.email,
+        photoURL: userCred.photoURL,
+        createdAt: serverTimestamp(),
+      };
+
+      await createOrUpdateDoc("users", userCred?.uid, newUser);
+      setLoading(false);
+    } catch (error: any) {
+      console.log("Sign Up error", error);
+      setLoading(false);
+      toast({
+        position: "top-right",
+        title: "Sign Up Error",
+        description:
+          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
+          "Something went wrong with registration",
+        status: "error",
+        duration: 300,
+        isClosable: true,
+      });
+    }
 
     reset();
   };
@@ -143,7 +146,7 @@ const SignUp: React.FC = () => {
           height="36px"
           mt={2}
           mb={2}
-          isLoading={loading || updating}
+          isLoading={loading}
         >
           {" "}
           Sign Up

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSetRecoilState } from "recoil";
@@ -7,42 +7,26 @@ import { BsDot, BsReddit } from "react-icons/bs";
 import { EmailIcon } from "@chakra-ui/icons";
 import { Flex, Icon, Button, Text, useToast } from "@chakra-ui/react";
 
-import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
-
 import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { IAUthInput } from "./Auth.interface";
 
-import { auth } from "../../../firebase/clientApp";
+import { useAuth } from "../../../firebase/useAuth";
+
 import { resetPassword } from "../../../helpers/authSchema";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 import MyInput from "../../elements/MyInput";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 type ResetPasswordProps = {};
 
 const ResetPassword: React.FC<ResetPasswordProps> = () => {
   const setAuthModalState = useSetRecoilState(authModalState);
+  const [loading, setLoading] = useState(false);
+
+  const { resetPasswordEmail } = useAuth();
 
   const [success, setSuccess] = useState(false);
   const toast = useToast();
-  const [sendPasswordResetEmail, sending, error] =
-    useSendPasswordResetEmail(auth);
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        position: "top-right",
-        title: "Reset Password Error",
-        description:
-          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      setSuccess(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
 
   const {
     register,
@@ -55,9 +39,29 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
   });
 
   const onSubmit: SubmitHandler<IAUthInput> = async (data) => {
-    await sendPasswordResetEmail(data.email);
-    reset();
-    setSuccess(true);
+    try {
+      setLoading(true);
+      await resetPasswordEmail(data.email);
+      setLoading(false);
+      reset();
+      setSuccess(true);
+    } catch (error: any) {
+      console.log("Reset Password Error", error);
+      setLoading(false);
+
+      toast({
+        position: "top-right",
+        title: "Reset Password Error",
+        description:
+          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
+          "Something went wrong with Sending Email",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      setSuccess(false);
+    }
   };
 
   const handleAuth = (view: IView) => {
@@ -97,7 +101,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
               mb={2}
               mt={2}
               type="submit"
-              isLoading={sending}
+              isLoading={loading}
               disabled={!isDirty || !isValid}
             >
               Reset Password

@@ -1,45 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useSetRecoilState } from "recoil";
 
-import { auth } from "../../../firebase/clientApp";
 import { loginSchema } from "../../../helpers/authSchema";
 import { IAUthInput } from "./Auth.interface";
 
-import { useSetRecoilState } from "recoil";
+import { useAuth } from "../../../firebase/useAuth";
+
 import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 import MyInput from "../../elements/MyInput";
 
 const Login: React.FC = () => {
-  const [signInWithEmailAndPassword, user, loading, error] =
-    useSignInWithEmailAndPassword(auth);
+  const { logIn } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
 
   const toast = useToast();
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        position: "top-right",
-        title: "Login Error",
-        description:
-          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
@@ -64,7 +48,25 @@ const Login: React.FC = () => {
 
   const onSubmit: SubmitHandler<IAUthInput> = async (data) => {
     const { email, password } = data;
-    await signInWithEmailAndPassword(email, password);
+    try {
+      setLoading(true);
+      await logIn(email, password);
+      setLoading(false);
+    } catch (error: any) {
+      console.log("Login Error", error);
+      setLoading(false);
+      toast({
+        position: "top-right",
+        title: "Login Error",
+        description:
+          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
+          "Something went wrong with registration",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+
     reset();
   };
 
