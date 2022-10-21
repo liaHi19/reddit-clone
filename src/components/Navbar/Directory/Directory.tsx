@@ -4,6 +4,7 @@ import { Flex, Icon, Menu, MenuList, Text } from "@chakra-ui/react";
 import { TiHome } from "react-icons/ti";
 
 import DropDownButton from "../../elements/DropDownButton";
+import Communities from "./Communities";
 
 const Directory: React.FC = () => {
   return (
@@ -16,7 +17,9 @@ const Directory: React.FC = () => {
           </Text>
         </Flex>
       </DropDownButton>
-      <MenuList>Something</MenuList>
+      <MenuList>
+        <Communities />
+      </MenuList>
     </Menu>
   );
 };
