@@ -4,4 +4,6 @@ export const FIREBASE_ERRORS = {
 
   "Firebase: Error (auth/user-not-found).": "Invalid email or password",
   "Firebase: Error (auth/wrong-password).": "Invalid email or password",
+  "FirebaseError: Invalid document reference. Document references must have an even number of segments, but communities has 1.":
+    "Can't create a document",
 };

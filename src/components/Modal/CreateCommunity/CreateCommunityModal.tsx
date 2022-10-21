@@ -12,12 +12,19 @@ import {
   Text,
   Input,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
+import { serverTimestamp } from "firebase/firestore";
 
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
 
+import { validateString } from "../../../helpers/validation";
+import { useAuth } from "../../../firebase/useAuth";
+import { createDoc } from "../../../firebase/firestore-helpers";
+
 import CommunityCheckbox from "./CommunityCheckbox";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 type CreateCommunityModalProps = {
   open: boolean;
@@ -28,18 +35,60 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   open,
   onClose,
 }) => {
+  const { user } = useAuth();
   const [communityName, setCommunityName] = useState("");
   const [charRemaining, setCharRemaining] = useState(21);
   const [communityType, setCommunityType] = useState("public");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (value.length > 21) return;
+
     setCommunityName(value);
     setCharRemaining(21 - value.length);
+
+    validateString(value) || value.length < 3
+      ? setError(
+          "Community names must be between 3-21 characters, and only can contain letters, numbers and underscores"
+        )
+      : setError("");
   };
+
   const handleCommunityType = (e: ChangeEvent<HTMLInputElement>) => {
     setCommunityType(e.target.name);
+  };
+
+  const handleCreateCommunity = async () => {
+    if (error) setError("");
+    const errorMsg = `Sorry, /r${communityName} is taken. Try another.`;
+    const data = {
+      creatorId: user?.uid,
+      createdAt: serverTimestamp(),
+      numberOfMembers: 1,
+      privacyType: communityType,
+    };
+
+    setLoading(true);
+    try {
+      await createDoc("communities", communityName, errorMsg, data);
+    } catch (error: any) {
+      console.log("handleCreateCommunity Error:", error);
+      toast({
+        position: "top-right",
+        title: "Create Community error",
+        description:
+          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+    setCommunityName("");
+    onClose();
   };
 
   return (
@@ -85,11 +134,15 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
             >
               {charRemaining} Characters remaining
             </Text>
+            {error && (
+              <Text fontSize="9pt" color="red" pt={1}>
+                {error}
+              </Text>
+            )}
             <Box mt={4} mb={4}>
               <Text fontWeight={600} fontSize={15}>
                 Community Type
               </Text>
-              {/* CheckBox */}
               <Stack spacing={2}>
                 <CommunityCheckbox
                   communityName="public"
@@ -121,7 +174,12 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           <Button variant="outline" height="30px" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button height="30px" disabled={communityName.length < 3}>
+          <Button
+            height="30px"
+            disabled={!!error || communityName.length < 3}
+            onClick={handleCreateCommunity}
+            isLoading={loading}
+          >
             Create Community
           </Button>
         </ModalFooter>
