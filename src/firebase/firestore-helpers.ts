@@ -27,12 +27,9 @@ export const createDoc = async (collection: ICollection) => {
   await setDoc(docRef, data);
 };
 
-export const createOrUpdateDoc = async (
-  collection: string,
-  id: any,
-  data: object
-) => {
-  await setDoc(doc(db, collection, id), data);
+export const createOrUpdateDoc = async (collection: ICollection) => {
+  const { collectionName, docId, data } = collection;
+  await setDoc(doc(db, collectionName, docId), data);
 };
 
 export const createDocWithSubCollection = async (

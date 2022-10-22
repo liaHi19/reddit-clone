@@ -70,7 +70,11 @@ const SignUp: React.FC = () => {
         uid: userCred.uid,
       };
 
-      await createOrUpdateDoc("users", userCred?.uid, newUser);
+      await createOrUpdateDoc({
+        collectionName: "users",
+        docId: userCred?.uid,
+        data: newUser,
+      });
       setLoading(false);
     } catch (error: any) {
       console.log("Sign Up error", error);

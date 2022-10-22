@@ -20,7 +20,11 @@ const OAuthButtons: React.FC = () => {
         uid: user.uid,
       };
 
-      createOrUpdateDoc("users", user.uid, newUser);
+      createOrUpdateDoc({
+        collectionName: "users",
+        docId: user?.uid,
+        data: newUser,
+      });
     }
   }, [user]);
 
