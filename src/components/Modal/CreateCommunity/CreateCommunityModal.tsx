@@ -21,10 +21,12 @@ import { HiLockClosed } from "react-icons/hi";
 
 import { validateString } from "../../../helpers/validation";
 import { useAuth } from "../../../firebase/useAuth";
-import { createDoc } from "../../../firebase/firestore-helpers";
+import {
+  createDoc,
+  createDocWithSubCollection,
+} from "../../../firebase/firestore-helpers";
 
 import CommunityCheckbox from "./CommunityCheckbox";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 type CreateCommunityModalProps = {
   open: boolean;
@@ -65,30 +67,45 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     if (error) setError("");
     const errorMsg = `Sorry, /r${communityName} is taken. Try another.`;
     const data = {
+      communityName,
       creatorId: user?.uid,
       createdAt: serverTimestamp(),
       numberOfMembers: 1,
       privacyType: communityType,
     };
-
+    const subdata = { communityId: communityName, isModerator: true };
     setLoading(true);
     try {
-      await createDoc("communities", communityName, errorMsg, data);
+      await createDocWithSubCollection(
+        {
+          collectionName: "communities",
+          docId: communityName,
+          errorMsg,
+          data,
+        },
+        {
+          mainCollectionName: "users",
+          mainDocId: user?.uid,
+          subcollectionName: "communitySnippets",
+          subId: communityName,
+          subdata,
+        }
+      );
+      setLoading(false);
+      setCommunityName("");
+      onClose();
     } catch (error: any) {
       console.log("handleCreateCommunity Error:", error);
       toast({
         position: "top-right",
         title: "Create Community error",
-        description:
-          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS],
+        description: error?.message,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+      setLoading(false);
     }
-    setLoading(false);
-    setCommunityName("");
-    onClose();
   };
 
   return (
@@ -145,21 +162,21 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               </Text>
               <Stack spacing={2}>
                 <CommunityCheckbox
-                  communityName="public"
+                  communityStatus="public"
                   communityType={communityType}
                   handleCommunityType={handleCommunityType}
                   text="Anyone can view, post, and comment to this community"
                   icon={BsFillPersonFill}
                 />
                 <CommunityCheckbox
-                  communityName="restricted"
+                  communityStatus="restricted"
                   communityType={communityType}
                   handleCommunityType={handleCommunityType}
                   text="Anyone can view  this community, but only approved users can post"
                   icon={BsFillEyeFill}
                 />
                 <CommunityCheckbox
-                  communityName="private"
+                  communityStatus="private"
                   communityType={communityType}
                   handleCommunityType={handleCommunityType}
                   text="Only approved users can submit to this community"

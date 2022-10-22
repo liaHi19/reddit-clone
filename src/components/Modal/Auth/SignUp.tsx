@@ -67,6 +67,7 @@ const SignUp: React.FC = () => {
         email: data.email,
         photoURL: userCred.photoURL,
         createdAt: serverTimestamp(),
+        uid: userCred.uid,
       };
 
       await createOrUpdateDoc("users", userCred?.uid, newUser);

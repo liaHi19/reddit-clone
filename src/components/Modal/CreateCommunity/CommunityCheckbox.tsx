@@ -2,7 +2,7 @@ import { Checkbox, Flex, Icon, Text } from "@chakra-ui/react";
 import React, { ChangeEvent, ReactNode } from "react";
 
 type CommunityCheckboxProps = {
-  communityName: "public" | "private" | "restricted";
+  communityStatus: "public" | "private" | "restricted";
   communityType: string;
   handleCommunityType: (e: ChangeEvent<HTMLInputElement>) => void;
   text: string;
@@ -10,7 +10,7 @@ type CommunityCheckboxProps = {
 };
 
 const CommunityCheckbox: React.FC<CommunityCheckboxProps> = ({
-  communityName,
+  communityStatus,
   communityType,
   handleCommunityType,
   text,
@@ -18,16 +18,16 @@ const CommunityCheckbox: React.FC<CommunityCheckboxProps> = ({
 }) => {
   return (
     <Checkbox
-      name={communityName}
-      isChecked={communityType === communityName}
+      name={communityStatus}
+      isChecked={communityType === communityStatus}
       onChange={handleCommunityType}
     >
       <Flex align="center">
         <Icon as={icon} color="gray.500" mr={2} />
         <Text fontSize="10pt" mr={1} textTransform="capitalize">
-          {communityName}
+          {communityStatus}
         </Text>
-        <Text fontSize="8pt" color="gray.500" pt={1}>
+        <Text fontSize="8pt" color="gray.500">
           {text}
         </Text>
       </Flex>

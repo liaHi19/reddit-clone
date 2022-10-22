@@ -17,6 +17,7 @@ const OAuthButtons: React.FC = () => {
         email: user.email,
         photoURL: user.photoURL,
         createdAt: serverTimestamp(),
+        uid: user.uid,
       };
 
       createOrUpdateDoc("users", user.uid, newUser);
