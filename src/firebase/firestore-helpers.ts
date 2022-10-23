@@ -1,14 +1,14 @@
 import { doc, getDoc, runTransaction, setDoc } from "firebase/firestore";
 import { db } from "./clientApp";
 
-interface ICollection {
+interface IDocument {
   collectionName: string;
   docId: any;
   errorMsg?: string;
-  data: object;
+  data?: object;
 }
 
-interface ISubCollection {
+interface ISubDocument {
   mainCollectionName: string;
   mainDocId: any;
   subcollectionName: string;
@@ -16,8 +16,8 @@ interface ISubCollection {
   subdata: object;
 }
 
-export const createDoc = async (collection: ICollection) => {
-  const { collectionName, docId, errorMsg, data } = collection;
+export const createDoc = async (infoDoc: IDocument) => {
+  const { collectionName, docId, errorMsg, data } = infoDoc;
   const docRef = doc(db, collectionName, docId);
   const document = await getDoc(docRef);
 
@@ -27,18 +27,18 @@ export const createDoc = async (collection: ICollection) => {
   await setDoc(docRef, data);
 };
 
-export const createOrUpdateDoc = async (collection: ICollection) => {
-  const { collectionName, docId, data } = collection;
+export const createOrUpdateDoc = async (infoDoc: IDocument) => {
+  const { collectionName, docId, data } = infoDoc;
   await setDoc(doc(db, collectionName, docId), data);
 };
 
 export const createDocWithSubCollection = async (
-  collection: ICollection,
-  subCollection: ISubCollection
+  infoDoc: IDocument,
+  subInfoDoc: ISubDocument
 ) => {
-  const { collectionName, docId, errorMsg, data } = collection;
+  const { collectionName, docId, errorMsg, data } = infoDoc;
   const { mainCollectionName, mainDocId, subcollectionName, subId, subdata } =
-    subCollection;
+    subInfoDoc;
   const docRef = doc(db, collectionName, docId);
 
   await runTransaction(db, async (transaction) => {
@@ -54,4 +54,12 @@ export const createDocWithSubCollection = async (
       subdata
     );
   });
+};
+
+export const receiveDoc = async (infoDoc: IDocument) => {
+  const { collectionName, docId } = infoDoc;
+
+  const docSnap = await getDoc(doc(db, collectionName, docId));
+  const document = { ...docSnap.data(), id: docSnap.id };
+  return { docSnap, document };
 };

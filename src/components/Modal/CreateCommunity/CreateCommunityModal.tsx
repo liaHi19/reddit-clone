@@ -67,7 +67,6 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     if (error) setError("");
     const errorMsg = `Sorry, /r${communityName} is taken. Try another.`;
     const data = {
-      communityName,
       creatorId: user?.uid,
       createdAt: serverTimestamp(),
       numberOfMembers: 1,
