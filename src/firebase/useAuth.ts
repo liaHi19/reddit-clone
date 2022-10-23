@@ -5,6 +5,11 @@ import {
   signOut,
 } from "firebase/auth";
 
+export interface IProfile {
+  displayName?: string | null;
+  photoURL?: string | null;
+}
+
 import {
   useAuthState,
   useSignInWithGoogle,
@@ -19,13 +24,12 @@ export const useAuth = () => {
   const [signInWithGoogle] = useSignInWithGoogle(auth);
 
   const createUser = async (data: IAUthInput) => {
-    const { email, password, firstName, lastName } = data;
+    const { email, password } = data;
     const userCred = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
-    await updateProfile({ displayName: `${firstName} ${lastName}` });
 
     return userCred.user;
   };
@@ -41,6 +45,14 @@ export const useAuth = () => {
   const resetPasswordEmail = async (email: string) => {
     await sendPasswordResetEmail(auth, email);
   };
+
+  const changeProfile = async (profile: IProfile) => {
+    await updateProfile({
+      displayName: profile?.displayName,
+      photoURL: profile?.photoURL,
+    });
+  };
+
   return {
     user,
     loading,
@@ -50,5 +62,6 @@ export const useAuth = () => {
     logIn,
     resetPasswordEmail,
     signInWithGoogle,
+    changeProfile,
   };
 };

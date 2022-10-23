@@ -22,7 +22,7 @@ import { IAUthInput } from "./Auth.interface";
 import MyInput from "../../elements/MyInput";
 
 const SignUp: React.FC = () => {
-  const { createUser } = useAuth();
+  const { createUser, changeProfile, user } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -61,10 +61,13 @@ const SignUp: React.FC = () => {
     try {
       setLoading(true);
       const userCred = await createUser(data);
+      await changeProfile({
+        displayName: `${data.firstName} ${data.lastName}`,
+      });
 
       const newUser = {
         displayName: userCred.displayName,
-        email: data.email,
+        email: userCred.email,
         photoURL: userCred.photoURL,
         createdAt: serverTimestamp(),
         uid: userCred.uid,
@@ -72,9 +75,10 @@ const SignUp: React.FC = () => {
 
       await createOrUpdateDoc({
         collectionName: "users",
-        docId: userCred?.uid,
+        docId: userCred.uid,
         data: newUser,
       });
+
       setLoading(false);
     } catch (error: any) {
       console.log("Sign Up error", error);
