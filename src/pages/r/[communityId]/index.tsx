@@ -1,23 +1,26 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 import safeJsonStringify from "safe-json-stringify";
 
-import { ICommunity } from "../../../atoms/communitiesAtom";
-import CommunityNotFound from "../../../components/Community/CommunityNotFound";
-
 import { receiveDoc } from "../../../firebase/firestore-helpers";
+import { ICommunity } from "../../../atoms/communitiesAtom";
+
+import CommunityHeader from "../../../components/Community/CommunityHeader";
+import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 
 type CommunityPageProps = {
   communityData: ICommunity;
 };
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
-  console.log(communityData);
-
   if (!communityData) {
     return <CommunityNotFound />;
   }
 
-  return <div>Welcome to {communityData.id}</div>;
+  return (
+    <>
+      <CommunityHeader communityData={communityData} />
+    </>
+  );
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
