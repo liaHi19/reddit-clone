@@ -6,6 +6,7 @@ import { ICommunity } from "../../../atoms/communitiesAtom";
 
 import CommunityHeader from "../../../components/Community/CommunityHeader";
 import CommunityNotFound from "../../../components/Community/CommunityNotFound";
+import PageContent from "../../../components/Layout/PageContent";
 
 type CommunityPageProps = {
   communityData: ICommunity;
@@ -19,6 +20,14 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   return (
     <>
       <CommunityHeader communityData={communityData} />
+      <PageContent>
+        <>
+          <div>left content</div>
+        </>
+        <>
+          <div>right content</div>
+        </>
+      </PageContent>
     </>
   );
 };
