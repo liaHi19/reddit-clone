@@ -2,6 +2,9 @@ import React from "react";
 
 import { Box, Button, Flex, Icon, Image, Text } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
+import { useAppSelector } from "../../store/hooks";
+import { ICommunity } from "../../shared/types/community.interface";
+import useCommunityData from "../../hooks/useCommunityData";
 
 type CommunityHeaderProps = {
   communityData: ICommunity;
@@ -9,8 +12,10 @@ type CommunityHeaderProps = {
 
 const CommunityHeader: React.FC<CommunityHeaderProps> = ({ communityData }) => {
   const { id, imageURL } = communityData;
+  const mySnippets = useAppSelector((state) => state.community.mySnippets);
+  const { joinOrLeaveCommunity } = useCommunityData();
 
-  const isJoined = false;
+  const isJoined = !!mySnippets.find((snippet) => snippet.communityId === id);
 
   return (
     <Flex direction="column" width="100%" height="146px">
@@ -44,6 +49,9 @@ const CommunityHeader: React.FC<CommunityHeaderProps> = ({ communityData }) => {
               height="30px"
               pr={6}
               pl={6}
+              onClick={() => {
+                joinOrLeaveCommunity(communityData, isJoined);
+              }}
             >
               {isJoined ? "Joined" : "Join"}
             </Button>

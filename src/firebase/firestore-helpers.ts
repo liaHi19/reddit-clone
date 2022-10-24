@@ -103,6 +103,7 @@ export const createSubDocAndUpdateDoc = async (
     doc(db, `${mainCollectionName}/${mainDocId}/${subCollectionName}`, subId),
     subdata
   );
+
   batch.update(doc(db, `${collectionName}`, docId), data);
 
   await batch.commit();
