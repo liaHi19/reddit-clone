@@ -3,15 +3,15 @@ import React from "react";
 import { Box, Button, Flex, Icon, Image, Text } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
 
-import { ICommunity } from "../../atoms/communitiesAtom";
-
 type CommunityHeaderProps = {
   communityData: ICommunity;
 };
 
 const CommunityHeader: React.FC<CommunityHeaderProps> = ({ communityData }) => {
   const { id, imageURL } = communityData;
-  const isJoined = false; //change
+
+  const isJoined = false;
+
   return (
     <Flex direction="column" width="100%" height="146px">
       <Box height="50%" bg="blue.400" />
@@ -44,7 +44,6 @@ const CommunityHeader: React.FC<CommunityHeaderProps> = ({ communityData }) => {
               height="30px"
               pr={6}
               pl={6}
-              // onClick={() => {}}
             >
               {isJoined ? "Joined" : "Join"}
             </Button>

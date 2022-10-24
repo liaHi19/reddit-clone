@@ -10,10 +10,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { useRecoilState } from "recoil";
 import { useAuth } from "../../../firebase/useAuth";
+import { useActions } from "../../../hooks/useActions";
+import { useAppSelector } from "../../../store/hooks";
 
-import { authModalState } from "../../../atoms/authModalAtom";
 import AuthInputs from "./AuthInputs";
 import OAuthButtons from "./OAuthButtons";
 import ResetPassword from "./ResetPassword";
@@ -21,12 +21,10 @@ import ResetPassword from "./ResetPassword";
 type AuthModalProps = {};
 
 const AuthModal: React.FC<AuthModalProps> = () => {
-  const [modalState, setModalState] = useRecoilState(authModalState);
-  const { user, loading, error } = useAuth();
+  const { user } = useAuth();
+  const { hideAuthModal } = useActions();
 
-  const hideAuthModal = () => {
-    setModalState((prev) => ({ ...prev, open: false }));
-  };
+  const authModal = useAppSelector((state) => state.authModal);
 
   useEffect(() => {
     if (user) {
@@ -36,13 +34,13 @@ const AuthModal: React.FC<AuthModalProps> = () => {
 
   return (
     <>
-      <Modal isOpen={modalState.open} onClose={hideAuthModal}>
+      <Modal isOpen={authModal.open} onClose={hideAuthModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader textAlign="center">
-            {modalState.view === "login"
+            {authModal.view === "login"
               ? "Login"
-              : modalState.view === "signup"
+              : authModal.view === "signup"
               ? "Sign Up"
               : "Reset Password"}
           </ModalHeader>
@@ -60,7 +58,7 @@ const AuthModal: React.FC<AuthModalProps> = () => {
               justify="center"
               width="90%"
             >
-              {modalState.view === "login" || modalState.view === "signup" ? (
+              {authModal.view === "login" || authModal.view === "signup" ? (
                 <>
                   {" "}
                   <OAuthButtons />

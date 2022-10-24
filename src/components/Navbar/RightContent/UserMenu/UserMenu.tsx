@@ -18,8 +18,7 @@ import { VscAccount } from "react-icons/vsc";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineLogin } from "react-icons/md";
 
-import { useSetRecoilState } from "recoil";
-import { authModalState } from "../../../../atoms/authModalAtom";
+import { useActions } from "../../../../hooks/useActions";
 
 import DropDownButton from "../../../elements/DropDownButton";
 import UserMenuItem from "./UserMenuItem";
@@ -31,11 +30,8 @@ type UserMenuProps = {
 };
 
 const UserMenu: React.FC<UserMenuProps> = ({ user, logOut }) => {
-  const setAuthModalState = useSetRecoilState(authModalState);
+  const { handleAuthView } = useActions();
 
-  const showLogin = () => {
-    setAuthModalState({ open: true, view: "login" });
-  };
   return (
     <Menu>
       <DropDownButton>
@@ -64,7 +60,9 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, logOut }) => {
           <UserMenuItem
             icon={MdOutlineLogin}
             text="Log in / Sign up"
-            onClick={showLogin}
+            onClick={() => {
+              handleAuthView("login");
+            }}
           />
         )}
       </MenuList>

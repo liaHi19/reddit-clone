@@ -72,7 +72,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       numberOfMembers: 1,
       privacyType: communityType,
     };
-    const subdata = { communityId: communityName, isModerator: true };
+    const subdata = { communityName, isModerator: true };
     setLoading(true);
     try {
       await createDocWithSubCollection(
@@ -85,7 +85,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         {
           mainCollectionName: "users",
           mainDocId: user?.uid,
-          subcollectionName: "communitySnippets",
+          subCollectionName: "communitySnippets",
           subId: communityName,
           subdata,
         }

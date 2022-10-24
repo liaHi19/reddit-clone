@@ -7,15 +7,15 @@ import { useToast } from "@chakra-ui/react";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSetRecoilState } from "recoil";
 import { serverTimestamp } from "firebase/firestore";
-
-import { authModalState, IView } from "../../../atoms/authModalAtom";
 
 import { registerSchema } from "../../../helpers/authSchema";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
+
 import { createOrUpdateDoc } from "../../../firebase/firestore-helpers";
+
 import { useAuth } from "../../../firebase/useAuth";
+import { useActions } from "../../../hooks/useActions";
 
 import { IAUthInput } from "./Auth.interface";
 
@@ -28,7 +28,7 @@ const SignUp: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const setAuthModalState = useSetRecoilState(authModalState);
+  const { handleAuthView } = useActions();
 
   const toast = useToast();
 
@@ -38,13 +38,6 @@ const SignUp: React.FC = () => {
 
   const handleConfirmPassword = () => {
     setShowConfirmPassword((prev) => !prev);
-  };
-
-  const handleAuth = (view: IView) => {
-    setAuthModalState((prev) => ({
-      ...prev,
-      view,
-    }));
   };
 
   const {
@@ -169,7 +162,7 @@ const SignUp: React.FC = () => {
           fontWeight={700}
           cursor="pointer"
           onClick={() => {
-            handleAuth("login");
+            handleAuthView("login");
           }}
         >
           Log in

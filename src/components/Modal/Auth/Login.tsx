@@ -10,8 +10,8 @@ import { loginSchema } from "../../../helpers/authSchema";
 import { IAUthInput } from "./Auth.interface";
 
 import { useAuth } from "../../../firebase/useAuth";
+import { useActions } from "../../../hooks/useActions";
 
-import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
 import MyInput from "../../elements/MyInput";
@@ -19,21 +19,14 @@ import MyInput from "../../elements/MyInput";
 const Login: React.FC = () => {
   const { logIn } = useAuth();
   const [loading, setLoading] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
-  const setAuthModalState = useSetRecoilState(authModalState);
+
+  const { handleAuthView } = useActions();
 
   const toast = useToast();
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
-  };
-
-  const handleAuth = (view: IView) => {
-    setAuthModalState((prev) => ({
-      ...prev,
-      view,
-    }));
   };
 
   const {
@@ -115,7 +108,7 @@ const Login: React.FC = () => {
           color="blue.500"
           cursor="pointer"
           onClick={() => {
-            handleAuth("resetPassword");
+            handleAuthView("resetPassword");
           }}
         >
           Reset
@@ -129,7 +122,7 @@ const Login: React.FC = () => {
           fontWeight={700}
           cursor="pointer"
           onClick={() => {
-            handleAuth("signup");
+            handleAuthView("signup");
           }}
         >
           sign up

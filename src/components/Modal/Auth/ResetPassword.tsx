@@ -7,10 +7,10 @@ import { BsDot, BsReddit } from "react-icons/bs";
 import { EmailIcon } from "@chakra-ui/icons";
 import { Flex, Icon, Button, Text, useToast } from "@chakra-ui/react";
 
-import { authModalState, IView } from "../../../atoms/authModalAtom";
 import { IAUthInput } from "./Auth.interface";
 
 import { useAuth } from "../../../firebase/useAuth";
+import { useActions } from "../../../hooks/useActions";
 
 import { resetPassword } from "../../../helpers/authSchema";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
@@ -20,8 +20,8 @@ import MyInput from "../../elements/MyInput";
 type ResetPasswordProps = {};
 
 const ResetPassword: React.FC<ResetPasswordProps> = () => {
-  const setAuthModalState = useSetRecoilState(authModalState);
   const [loading, setLoading] = useState(false);
+  const { handleAuthView } = useActions();
 
   const { resetPasswordEmail } = useAuth();
 
@@ -62,13 +62,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
 
       setSuccess(false);
     }
-  };
-
-  const handleAuth = (view: IView) => {
-    setAuthModalState((prev) => ({
-      ...prev,
-      view,
-    }));
   };
 
   return (
@@ -116,9 +109,9 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
         fontWeight={700}
         cursor="pointer"
       >
-        <Text onClick={() => handleAuth("login")}>LOGIN</Text>
+        <Text onClick={() => handleAuthView("login")}>LOGIN</Text>
         <Icon as={BsDot} />
-        <Text onClick={() => handleAuth("signup")}>SIGN UP</Text>
+        <Text onClick={() => handleAuthView("signup")}>SIGN UP</Text>
       </Flex>
     </Flex>
   );
