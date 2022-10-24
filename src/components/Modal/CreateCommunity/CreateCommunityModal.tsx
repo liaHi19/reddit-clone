@@ -12,19 +12,16 @@ import {
   Text,
   Input,
   Stack,
-  useToast,
 } from "@chakra-ui/react";
 import { serverTimestamp } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
 
 import { validateString } from "../../../helpers/validation";
 import { useAuth } from "../../../firebase/useAuth";
-import {
-  createDoc,
-  createDocWithSubCollection,
-} from "../../../firebase/firestore-helpers";
+import { createDocWithSubCollection } from "../../../firebase/firestore-helpers";
 
 import CommunityCheckbox from "./CommunityCheckbox";
 
@@ -43,7 +40,6 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [communityType, setCommunityType] = useState("public");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const toast = useToast();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -72,7 +68,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       numberOfMembers: 1,
       privacyType: communityType,
     };
-    const subdata = { communityName, isModerator: true };
+    const subdata = { isModerator: true };
     setLoading(true);
     try {
       await createDocWithSubCollection(
@@ -94,15 +90,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       setCommunityName("");
       onClose();
     } catch (error: any) {
-      console.log("handleCreateCommunity Error:", error);
-      toast({
-        position: "top-right",
-        title: "Create Community error",
-        description: error?.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error("Can't create a community");
       setLoading(false);
     }
   };

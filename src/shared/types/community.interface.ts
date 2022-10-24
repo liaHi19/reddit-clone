@@ -10,8 +10,7 @@ export interface ICommunity {
 }
 
 export interface ICommunitySnippet {
-  communityId: string;
+  id: string;
   isModerator: boolean;
   imageURL?: string;
-  id?: string;
 }

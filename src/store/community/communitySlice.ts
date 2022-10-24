@@ -16,7 +16,9 @@ const initialState: ICommunityState = {
 export const communitySlice = createSlice({
   name: "community",
   initialState,
-  reducers: {},
+  reducers: {
+    resetCommunity: () => initialState,
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getMySnippets.pending, (state) => {
@@ -37,7 +39,7 @@ export const communitySlice = createSlice({
       .addCase(leaveCommunity.fulfilled, (state, { payload }) => {
         (state.loading = false),
           (state.mySnippets = state.mySnippets.filter(
-            (snippet) => snippet.communityId !== payload
+            (snippet) => snippet.id !== payload
           ));
       })
       .addMatcher(isError, (state, action: PayloadAction<string>) => {
@@ -49,5 +51,7 @@ export const communitySlice = createSlice({
 const isError = (action: AnyAction) => {
   return action.type.endsWith("rejected");
 };
+
+export const { resetCommunity } = communitySlice.actions;
 
 export const { reducer } = communitySlice;

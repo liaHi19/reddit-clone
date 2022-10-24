@@ -12,10 +12,9 @@ type CommunityHeaderProps = {
 
 const CommunityHeader: React.FC<CommunityHeaderProps> = ({ communityData }) => {
   const { id, imageURL } = communityData;
-  const mySnippets = useAppSelector((state) => state.community.mySnippets);
-  const { joinOrLeaveCommunity } = useCommunityData();
 
-  const isJoined = !!mySnippets.find((snippet) => snippet.communityId === id);
+  const { joinOrLeaveCommunity, mySnippets, loading } = useCommunityData();
+  const isJoined = !!mySnippets.find((snippet) => snippet.id === id);
 
   return (
     <Flex direction="column" width="100%" height="146px">
@@ -49,6 +48,7 @@ const CommunityHeader: React.FC<CommunityHeaderProps> = ({ communityData }) => {
               height="30px"
               pr={6}
               pl={6}
+              isLoading={loading}
               onClick={() => {
                 joinOrLeaveCommunity(communityData, isJoined);
               }}

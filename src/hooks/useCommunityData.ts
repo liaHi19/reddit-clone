@@ -2,12 +2,15 @@ import { useEffect } from "react";
 
 import { useAuth } from "../firebase/useAuth";
 import { ICommunity } from "../shared/types/community.interface";
+
+import { useAppSelector } from "../store/hooks";
 import { useActions } from "./useActions";
 
 const useCommunityData = () => {
   const { getMySnippets, joinCommunity, leaveCommunity, handleAuthView } =
     useActions();
   const { user } = useAuth();
+  const { mySnippets, loading } = useAppSelector((state) => state.community);
 
   useEffect(() => {
     if (!user) return;
@@ -25,13 +28,13 @@ const useCommunityData = () => {
     }
     // authenticated users
     if (isJoined) {
-      leaveCommunity({ communityId: communityData.id, uid: user?.uid });
+      leaveCommunity({ id: communityData.id, uid: user.uid });
       return;
     }
-    joinCommunity({ communityData, uid: user?.uid });
+    joinCommunity({ communityData, uid: user.uid });
   };
 
-  return { joinOrLeaveCommunity };
+  return { mySnippets, loading, joinOrLeaveCommunity };
 };
 
 export default useCommunityData;

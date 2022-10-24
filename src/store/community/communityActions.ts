@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { increment } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 import {
   createSubDocAndUpdateDoc,
@@ -24,8 +25,7 @@ export const getMySnippets = createAsyncThunk<ICommunitySnippet[], string>(
 
       return snippets as ICommunitySnippet[];
     } catch (error: any) {
-      console.log(error);
-
+      toast.error("Can't receive your communities");
       return thunkApi.rejectWithValue(error.message);
     }
   }
@@ -33,12 +33,12 @@ export const getMySnippets = createAsyncThunk<ICommunitySnippet[], string>(
 
 export const joinCommunity = createAsyncThunk<
   ICommunitySnippet,
-  { communityData: ICommunity; uid: string | undefined }
+  { communityData: ICommunity; uid: string }
 >("community/joinCommunity", async ({ communityData, uid }, thunkApi) => {
   console.log(communityData, uid);
 
   const newSnippet: ICommunitySnippet = {
-    communityId: communityData.id,
+    id: communityData.id,
     imageURL: communityData.imageURL || "",
     isModerator: false,
   };
@@ -61,7 +61,7 @@ export const joinCommunity = createAsyncThunk<
 
     return newSnippet;
   } catch (error: any) {
-    console.log(error);
+    toast.error("Can't join to the Community");
 
     return thunkApi.rejectWithValue(error.message);
   }
@@ -69,25 +69,25 @@ export const joinCommunity = createAsyncThunk<
 
 export const leaveCommunity = createAsyncThunk<
   string,
-  { communityId: string; uid: string | undefined }
->("community/leaveCommunity", async ({ communityId, uid }, thunkApi) => {
+  { id: string; uid: string }
+>("community/leaveCommunity", async ({ id, uid }, thunkApi) => {
   try {
     await deleteSubDocAndUpdateDoc(
       {
         collectionName: "communities",
-        docId: communityId,
+        docId: id,
         data: { numberOfMembers: increment(-1) },
       },
       {
         mainCollectionName: "users",
         mainDocId: uid,
         subCollectionName: "communitySnippets",
-        subId: communityId,
+        subId: id,
       }
     );
-    return communityId;
+    return id;
   } catch (error: any) {
-    console.log(error);
+    toast.error("Can't leave the Community");
 
     return thunkApi.rejectWithValue(error.message);
   }
