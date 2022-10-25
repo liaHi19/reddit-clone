@@ -1,7 +1,6 @@
 import React from "react";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Icon } from "@chakra-ui/react";
 
-import { AddIcon } from "@chakra-ui/icons";
 import { BsArrowUpRightCircle, BsChatDots } from "react-icons/bs";
 import { GrAdd } from "react-icons/gr";
 import {
@@ -10,7 +9,13 @@ import {
   IoVideocamOutline,
 } from "react-icons/io5";
 
-const icons = [
+export interface NavIcon {
+  id: number;
+  icon: typeof Icon.arguments;
+  size: number;
+}
+
+const icons: NavIcon[] = [
   { id: 1, icon: BsArrowUpRightCircle, size: 20 },
   { id: 2, icon: IoFilterCircleOutline, size: 22 },
   { id: 3, icon: IoVideocamOutline, size: 22 },

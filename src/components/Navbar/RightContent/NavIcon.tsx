@@ -2,7 +2,7 @@ import { Flex, Icon } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
 type NavIconProps = {
-  icon?: ReactNode | any;
+  icon: typeof Icon.arguments;
   size: number;
   display?: boolean;
 };
