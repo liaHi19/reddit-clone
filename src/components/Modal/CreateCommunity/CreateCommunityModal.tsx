@@ -61,6 +61,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 
   const handleCreateCommunity = async () => {
     if (error) setError("");
+
+    //create data information
     const errorMsg = `Sorry, /r${communityName} is taken. Try another.`;
     const data = {
       creatorId: user?.uid,
@@ -69,6 +71,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       privacyType: communityType,
     };
     const subdata = { isModerator: true };
+
     setLoading(true);
     try {
       await createDocWithSubCollection(
@@ -90,7 +93,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       setCommunityName("");
       onClose();
     } catch (error: any) {
-      toast.error("Can't create a community");
+      toast.error(error.message);
       setLoading(false);
     }
   };
