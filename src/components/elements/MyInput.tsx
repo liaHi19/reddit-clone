@@ -37,7 +37,7 @@ const MyInput = forwardRef<IMyInput>(
     ref
   ) => {
     return (
-      <FormControl height="86px" isInvalid={errorText}>
+      <FormControl height={label ? "86px" : "62px"} isInvalid={errorText}>
         {label && <FormLabel mb={1}>{label}</FormLabel>}
         <InputGroup>
           {leftIcon && (

@@ -4,7 +4,6 @@ import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSetRecoilState } from "recoil";
 
 import { loginSchema } from "../../../helpers/authSchema";
 import { IAUthInput } from "./Auth.interface";

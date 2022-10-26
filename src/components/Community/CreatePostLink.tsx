@@ -19,8 +19,8 @@ const CreatePostLink: React.FC = () => {
       handleAuthView("login");
       return;
     }
-    const { communityId } = router.query;
-    router.push(`/r/${communityId}/submit`);
+    const { id } = router.query;
+    router.push(`/r/${id}/submit`);
   };
 
   return (
