@@ -1,14 +1,16 @@
 import {
+  addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
   runTransaction,
   setDoc,
+  updateDoc,
   writeBatch,
 } from "firebase/firestore";
-import { IoDocument } from "react-icons/io5";
-import { db } from "./clientApp";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { db, storage } from "./clientApp";
 
 interface IDocument {
   collectionName: string;
@@ -51,6 +53,8 @@ export const receiveDoc = async (infoDoc: IDocument) => {
   const document = { ...docSnap.data(), id: docSnap.id };
   return { docSnap, document };
 };
+
+// subcollections
 
 export const createDocWithSubCollection = async (
   infoDoc: IDocument,
@@ -126,4 +130,24 @@ export const deleteSubDocAndUpdateDoc = async (
   batch.update(doc(db, `${collectionName}`, docId), data);
 
   await batch.commit();
+};
+
+// storage
+export const createDocAndSaveFile = async (
+  collectionInfo: ICollection,
+  file: string,
+  fileName: string
+) => {
+  const { collectionName, data } = collectionInfo;
+  const docRef = await addDoc(collection(db, `${collectionName}`), data);
+
+  if (file) {
+    const imageRef = ref(storage, `${collectionName}/${docRef.id}/image`);
+    await uploadString(imageRef, file, "data_url");
+    const downloadURL = await getDownloadURL(imageRef);
+
+    await updateDoc(docRef, {
+      [fileName]: downloadURL,
+    });
+  }
 };

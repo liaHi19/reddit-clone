@@ -1,5 +1,7 @@
 import React, { ChangeEvent, useState } from "react";
+import { useRouter } from "next/router";
 import { Flex, Icon } from "@chakra-ui/react";
+import { toast } from "react-toastify";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,12 +10,15 @@ import { BiPoll } from "react-icons/bi";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
 
-import { IPostInput } from "../../../shared/types/posts.interface";
+import { User } from "firebase/auth";
+import { serverTimestamp, Timestamp } from "firebase/firestore";
+import { IPost, IPostInput } from "../../../shared/types/posts.interface";
 import { postSchema } from "../../../helpers/postSchema";
 
 import TextInputs from "./TextInputs";
 import ImageUpload from "./ImageUpload";
 import TabItem from "../TabItem";
+import { createDocAndSaveFile } from "../../../firebase/firestore-helpers";
 
 export interface ITabItem {
   title: string;
@@ -27,19 +32,53 @@ const formTabs: ITabItem[] = [
   { title: "Poll", icon: BiPoll },
   { title: "Talk", icon: BsMic },
 ];
-
-const NewPostForm: React.FC = () => {
+type NewPostFormProps = {
+  user: User;
+};
+const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [selectedFile, setSelectedFile] = useState<string>("");
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const { register, handleSubmit, formState, reset } = useForm<IPostInput>({
     mode: "onChange",
     resolver: yupResolver(postSchema),
   });
 
-  const handleCreatePost: SubmitHandler<IPostInput> = (data) => {
-    console.log(data);
+  const handleCreatePost: SubmitHandler<IPostInput> = async (data) => {
+    const { title, body } = data;
+    const communityId = router.query.id as string;
+
+    //form newPost
+    const newPost: IPost = {
+      communityId,
+      creatorId: user.uid,
+      creatorDisplayName: user.displayName
+        ? user.displayName
+        : user.email!.split("0")[0],
+      title,
+      body,
+      numberOfComments: 0,
+      voteStatus: 0,
+      createdAt: serverTimestamp() as Timestamp,
+    };
+
+    setLoading(true);
+    try {
+      await createDocAndSaveFile(
+        { collectionName: "posts", data: newPost },
+        selectedFile,
+        "imageURL"
+      );
+      reset();
+      setLoading(false);
+    } catch (error) {
+      toast.error("Can't create a post");
+      setLoading(false);
+    }
+    // router.back()
   };
 
   const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {

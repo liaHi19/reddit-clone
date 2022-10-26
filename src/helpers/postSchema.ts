@@ -19,7 +19,6 @@ export const postSchema = yup.object().shape(
           .max(200, "* Max length is 400 characters"),
         otherwise: yup.string().notRequired(),
       }),
-    image: yup.string().notRequired(),
   },
   [["body", "body"]]
 );
