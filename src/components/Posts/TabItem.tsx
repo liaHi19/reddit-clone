@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Icon, Text } from "@chakra-ui/react";
-import { ITabItem } from "./NewPostForm";
+import { ITabItem } from "./PostForm/NewPostForm";
 
 type TabItemProps = {
   icon: ITabItem;

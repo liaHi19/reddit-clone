@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import { Box, Text } from "@chakra-ui/react";
 
 import PageContent from "../../../components/Layout/PageContent";
-import NewPostForm from "../../../components/Posts/NewPostForm";
+import NewPostForm from "../../../components/Posts/PostForm/NewPostForm";
 
 const SubmitPostPage: NextPage = () => {
   return (
