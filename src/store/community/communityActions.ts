@@ -35,8 +35,6 @@ export const joinCommunity = createAsyncThunk<
   ICommunitySnippet,
   { communityData: ICommunity; uid: string }
 >("community/joinCommunity", async ({ communityData, uid }, thunkApi) => {
-  console.log(communityData, uid);
-
   const newSnippet: ICommunitySnippet = {
     id: communityData.id,
     imageURL: communityData.imageURL || "",

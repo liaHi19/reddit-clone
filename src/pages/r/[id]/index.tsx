@@ -2,12 +2,13 @@ import { GetServerSidePropsContext, NextPage } from "next";
 import safeJsonStringify from "safe-json-stringify";
 
 import { receiveDoc } from "../../../firebase/firestore-helpers";
+import { ICommunity } from "../../../shared/types/community.interface";
 
 import CommunityHeader from "../../../components/Community/CommunityHeader";
 import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import PageContent from "../../../components/Layout/PageContent";
 import CreatePostLink from "../../../components/Community/CreatePostLink";
-import { ICommunity } from "../../../shared/types/community.interface";
+import Posts from "../../../components/Posts/Posts";
 
 type CommunityPageProps = {
   communityData: ICommunity;
@@ -24,6 +25,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
       <PageContent>
         <>
           <CreatePostLink />
+          <Posts communityData={communityData} />
         </>
         <>
           <div>right content</div>

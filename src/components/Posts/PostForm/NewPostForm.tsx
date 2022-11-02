@@ -19,6 +19,8 @@ import TextInputs from "./TextInputs";
 import ImageUpload from "./ImageUpload";
 import TabItem from "../TabItem";
 import { createDocAndSaveFile } from "../../../firebase/firestore-helpers";
+import { readableDate } from "../../../helpers/date";
+import moment from "moment";
 
 export interface ITabItem {
   title: string;
@@ -62,7 +64,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
       body,
       numberOfComments: 0,
       voteStatus: 0,
-      createdAt: serverTimestamp() as Timestamp,
+      createdAt: moment().format(),
     };
 
     setLoading(true);
@@ -72,13 +74,15 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
         selectedFile,
         "imageURL"
       );
-      reset();
       setLoading(false);
+
+      reset();
     } catch (error) {
       toast.error("Can't create a post");
       setLoading(false);
     }
-    // router.back()
+
+    router.back();
   };
 
   const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {

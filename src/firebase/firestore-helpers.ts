@@ -1,12 +1,16 @@
+import { log } from "console";
 import {
   addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
+  orderBy,
+  query,
   runTransaction,
   setDoc,
   updateDoc,
+  where,
   writeBatch,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
@@ -30,6 +34,17 @@ interface ISubDocument {
 type ICollection = Omit<IDocument, "docId">;
 type ISubCollection = Omit<ISubDocument, "subId">;
 
+interface ISelection {
+  docField: string;
+  condition: "==" | "!=";
+  comparedField: string;
+}
+
+interface ISort {
+  sortedField: string;
+  order: "desc" | "asc";
+}
+
 export const createDoc = async (infoDoc: IDocument) => {
   const { collectionName, docId, errorMsg, data } = infoDoc;
   const docRef = doc(db, collectionName, docId);
@@ -52,6 +67,31 @@ export const receiveDoc = async (infoDoc: IDocument) => {
   const docSnap = await getDoc(doc(db, collectionName, docId));
   const document = { ...docSnap.data(), id: docSnap.id };
   return { docSnap, document };
+};
+
+export const receiveDocsWithQueryAndSort = async (
+  infoCollection: ICollection,
+  selection: ISelection,
+  sort: ISort
+) => {
+  const { collectionName } = infoCollection;
+  const { docField, condition, comparedField } = selection;
+  const { sortedField, order } = sort;
+
+  const docQuery = query(
+    collection(db, collectionName),
+    where(docField, condition, comparedField),
+    orderBy(sortedField, order)
+  );
+
+  const documentsSnap = await getDocs(docQuery);
+  const documents = documentsSnap.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+  console.log(documents);
+
+  return documents;
 };
 
 // subcollections

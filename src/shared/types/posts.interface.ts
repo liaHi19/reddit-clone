@@ -7,7 +7,7 @@ export interface IPostInput {
 }
 
 export interface IPost {
-  id: string;
+  id?: string;
   communityId: string;
   creatorId: string;
   creatorDisplayName: string;
@@ -17,5 +17,5 @@ export interface IPost {
   voteStatus: number;
   imageURL?: string;
   communityImageURL?: string;
-  createdAt: Timestamp;
+  createdAt: string;
 }
