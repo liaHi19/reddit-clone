@@ -2,6 +2,7 @@ import { log } from "console";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -13,7 +14,12 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadString,
+} from "firebase/storage";
 import { db, storage } from "./clientApp";
 
 interface IDocument {
@@ -179,7 +185,7 @@ export const createDocAndSaveFile = async (
   fileName: string
 ) => {
   const { collectionName, data } = collectionInfo;
-  const docRef = await addDoc(collection(db, `${collectionName}`), data);
+  const docRef = await addDoc(collection(db, collectionName), data);
 
   if (file) {
     const imageRef = ref(storage, `${collectionName}/${docRef.id}/image`);
@@ -190,4 +196,17 @@ export const createDocAndSaveFile = async (
       [fileName]: downloadURL,
     });
   }
+};
+
+export const deleteDocAndDeleteFile = async (
+  infoDoc: IDocument,
+  file: string
+) => {
+  const { collectionName, docId } = infoDoc;
+  if (file) {
+    const fileRef = ref(storage, `${collectionName}/${docId}/image`);
+    await deleteObject(fileRef);
+  }
+  const docRef = doc(db, collectionName, docId);
+  await deleteDoc(docRef);
 };

@@ -10,21 +10,22 @@ import MyInput from "../../elements/MyInput";
 import MyTextarea from "../../elements/MyTextarea";
 
 import { IPostInput } from "../../../shared/types/posts.interface";
+import { useAppSelector } from "../../../store/hooks";
 
 type TextInputsProps = {
   register: UseFormRegister<IPostInput>;
   handleSubmit: UseFormHandleSubmit<IPostInput>;
   formState: FormState<IPostInput>;
-  loading: boolean;
   handleCreatePost: (data: IPostInput) => void;
+  loading: boolean;
 };
 
 const TextInputs: React.FC<TextInputsProps> = ({
   register,
   handleSubmit,
   formState: { errors, isValid },
-  loading,
   handleCreatePost,
+  loading,
 }) => {
   return (
     <Stack spacing={3} width="100%">

@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useState } from "react";
 import { useRouter } from "next/router";
-import { Flex, Icon } from "@chakra-ui/react";
+import moment from "moment";
 import { toast } from "react-toastify";
+import { Flex, Icon } from "@chakra-ui/react";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,16 +12,13 @@ import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
 
 import { User } from "firebase/auth";
-import { serverTimestamp, Timestamp } from "firebase/firestore";
 import { IPost, IPostInput } from "../../../shared/types/posts.interface";
 import { postSchema } from "../../../helpers/postSchema";
+import { createDocAndSaveFile } from "../../../firebase/firestore-helpers";
 
 import TextInputs from "./TextInputs";
 import ImageUpload from "./ImageUpload";
 import TabItem from "../TabItem";
-import { createDocAndSaveFile } from "../../../firebase/firestore-helpers";
-import { readableDate } from "../../../helpers/date";
-import moment from "moment";
 
 export interface ITabItem {
   title: string;
@@ -66,7 +64,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
       voteStatus: 0,
       createdAt: moment().format(),
     };
-
     setLoading(true);
     try {
       await createDocAndSaveFile(
@@ -81,7 +78,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
       toast.error("Can't create a post");
       setLoading(false);
     }
-
     router.back();
   };
 
@@ -116,8 +112,8 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
             register={register}
             handleSubmit={handleSubmit}
             formState={formState}
-            loading={loading}
             handleCreatePost={handleCreatePost}
+            loading={loading}
           />
         )}
         {selectedTab === "Images & Video" && (
