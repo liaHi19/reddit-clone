@@ -1,7 +1,9 @@
 import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { ICommunityState } from "./community.interface";
+import { ICommunity } from "../../shared/types/community.interface";
 import {
+  getCurrentCommunity,
   getMySnippets,
   joinCommunity,
   leaveCommunity,
@@ -10,6 +12,7 @@ import {
 const initialState: ICommunityState = {
   loading: false,
   mySnippets: [],
+  currentCommunity: {} as ICommunity,
   error: null,
 };
 
@@ -41,6 +44,14 @@ export const communitySlice = createSlice({
           (state.mySnippets = state.mySnippets.filter(
             (snippet) => snippet.id !== payload
           ));
+      })
+      .addCase(getCurrentCommunity.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCurrentCommunity.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.currentCommunity = payload;
       })
       .addMatcher(isError, (state, action: PayloadAction<string>) => {
         (state.loading = false), (state.error = action.payload);

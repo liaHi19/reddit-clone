@@ -13,8 +13,8 @@ import {
   Input,
   Stack,
 } from "@chakra-ui/react";
-import { serverTimestamp } from "firebase/firestore";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
@@ -66,7 +66,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     const errorMsg = `Sorry, /r${communityName} is taken. Try another.`;
     const data = {
       creatorId: user?.uid,
-      createdAt: serverTimestamp(),
+      createdAt: moment().format(),
       numberOfMembers: 1,
       privacyType: communityType,
     };

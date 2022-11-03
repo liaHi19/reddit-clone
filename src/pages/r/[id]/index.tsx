@@ -1,7 +1,9 @@
 import { GetServerSidePropsContext, NextPage } from "next";
-import safeJsonStringify from "safe-json-stringify";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 import { receiveDoc } from "../../../firebase/firestore-helpers";
+import { useActions } from "../../../hooks/useActions";
 import { ICommunity } from "../../../shared/types/community.interface";
 
 import CommunityHeader from "../../../components/Community/CommunityHeader";
@@ -15,6 +17,13 @@ type CommunityPageProps = {
 };
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
+  const router = useRouter();
+  const { getCurrentCommunity } = useActions();
+
+  useEffect(() => {
+    getCurrentCommunity(router.query.id as string);
+  }, []);
+
   if (!communityData) {
     return <CommunityNotFound />;
   }
@@ -37,12 +46,10 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
-    const { docSnap, document: community } = await receiveDoc({
+    const { docSnap, document: communityData } = await receiveDoc({
       collectionName: "communities",
       docId: context.query.id,
     });
-
-    const communityData = JSON.parse(safeJsonStringify(community));
 
     return {
       props: { communityData: docSnap.exists() ? communityData : "" },

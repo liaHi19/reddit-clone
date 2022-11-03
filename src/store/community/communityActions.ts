@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import {
   createSubDocAndUpdateDoc,
   deleteSubDocAndUpdateDoc,
+  receiveDoc,
   receiveSubCollection,
 } from "../../firebase/firestore-helpers";
 
@@ -90,3 +91,19 @@ export const leaveCommunity = createAsyncThunk<
     return thunkApi.rejectWithValue(error.message);
   }
 });
+
+export const getCurrentCommunity = createAsyncThunk<ICommunity, string>(
+  "community/getCurrentCommunity",
+  async (id, thunkApi) => {
+    try {
+      const { document } = await receiveDoc({
+        collectionName: "communities",
+        docId: id,
+      });
+      return document as ICommunity;
+    } catch (error: any) {
+      toast.error("Can't receive a community");
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);

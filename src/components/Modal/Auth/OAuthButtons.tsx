@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment";
+
 import { Flex, Button, Image, useToast } from "@chakra-ui/react";
 
 import { useAuth } from "../../../firebase/useAuth";
 import { createOrUpdateDoc } from "../../../firebase/firestore-helpers";
-import { serverTimestamp } from "firebase/firestore";
 
 const OAuthButtons: React.FC = () => {
   const { signInWithGoogle, user } = useAuth();
@@ -16,7 +17,7 @@ const OAuthButtons: React.FC = () => {
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
-        createdAt: serverTimestamp(),
+        createdAt: moment().format(),
         uid: user.uid,
       };
 

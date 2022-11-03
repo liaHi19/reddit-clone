@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from "moment";
 
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Button, Flex, Icon, Text } from "@chakra-ui/react";
@@ -7,7 +8,6 @@ import { useToast } from "@chakra-ui/react";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { serverTimestamp } from "firebase/firestore";
 
 import { registerSchema } from "../../../helpers/authSchema";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
@@ -62,7 +62,7 @@ const SignUp: React.FC = () => {
         displayName: userCred.displayName,
         email: userCred.email,
         photoURL: userCred.photoURL,
-        createdAt: serverTimestamp(),
+        createdAt: moment().format(),
         uid: userCred.uid,
       };
 
