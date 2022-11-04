@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ import { User } from "firebase/auth";
 import { IPost, IPostInput } from "../../../shared/types/posts.interface";
 import { postSchema } from "../../../helpers/postSchema";
 import { createDocAndSaveFile } from "../../../firebase/firestore-helpers";
+import useSelectFile from "../../../hooks/useSelectFile";
 
 import TextInputs from "./TextInputs";
 import ImageUpload from "./ImageUpload";
@@ -36,10 +37,9 @@ type NewPostFormProps = {
   user: User;
 };
 const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
+  const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile();
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
-  const [selectedFile, setSelectedFile] = useState<string>("");
   const [loading, setLoading] = useState(false);
-
   const router = useRouter();
 
   const { register, handleSubmit, formState, reset } = useForm<IPostInput>({
@@ -81,19 +81,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     router.back();
   };
 
-  const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    if (e.target?.files?.[0]) {
-      reader.readAsDataURL(e.target.files[0]);
-    }
-
-    reader.onload = (readerEvent) => {
-      if (readerEvent.target?.result) {
-        setSelectedFile(readerEvent.target.result as string);
-      }
-    };
-  };
-
   return (
     <Flex direction="column" bg="white" borderRadius={4} mt={2}>
       <Flex width="100%">
@@ -119,7 +106,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
         {selectedTab === "Images & Video" && (
           <ImageUpload
             selectedFile={selectedFile}
-            onSelectImage={onSelectImage}
+            onSelectFile={onSelectFile}
             setSelectedFile={setSelectedFile}
             setSelectedTab={setSelectedTab}
           />

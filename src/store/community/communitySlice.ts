@@ -7,10 +7,12 @@ import {
   getMySnippets,
   joinCommunity,
   leaveCommunity,
+  updateImageOfCommunity,
 } from "./communityActions";
 
 const initialState: ICommunityState = {
   loading: false,
+  uploadingImage: false,
   mySnippets: [],
   currentCommunity: {} as ICommunity,
   error: null,
@@ -52,6 +54,17 @@ export const communitySlice = createSlice({
       .addCase(getCurrentCommunity.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.currentCommunity = payload;
+      })
+      .addCase(updateImageOfCommunity.pending, (state) => {
+        state.uploadingImage = true;
+        state.error = null;
+      })
+      .addCase(updateImageOfCommunity.fulfilled, (state, { payload }) => {
+        state.uploadingImage = false;
+        state.currentCommunity = {
+          ...state.currentCommunity,
+          imageURL: payload,
+        } as ICommunity;
       })
       .addMatcher(isError, (state, action: PayloadAction<string>) => {
         (state.loading = false), (state.error = action.payload);

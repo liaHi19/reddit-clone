@@ -7,6 +7,7 @@ import {
   deleteSubDocAndUpdateDoc,
   receiveDoc,
   receiveSubCollection,
+  updateDocAndSaveFile,
 } from "../../firebase/firestore-helpers";
 
 import {
@@ -103,6 +104,29 @@ export const getCurrentCommunity = createAsyncThunk<ICommunity, string>(
       return document as ICommunity;
     } catch (error: any) {
       toast.error("Can't receive a community");
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateImageOfCommunity = createAsyncThunk<
+  string,
+  { id: string; file: string; fileName: string }
+>(
+  "community/updateImageOfCommunity",
+  async ({ id, file, fileName }, thunkApi) => {
+    try {
+      const imageUrl = await updateDocAndSaveFile(
+        {
+          collectionName: "communities",
+          docId: id,
+        },
+        file,
+        fileName
+      );
+
+      return imageUrl as string;
+    } catch (error: any) {
       return thunkApi.rejectWithValue(error.message);
     }
   }

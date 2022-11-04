@@ -210,3 +210,21 @@ export const deleteDocAndDeleteFile = async (
   const docRef = doc(db, collectionName, docId);
   await deleteDoc(docRef);
 };
+
+export const updateDocAndSaveFile = async (
+  infoDoc: IDocument,
+  file: string,
+  fileName: string
+) => {
+  const { collectionName, docId } = infoDoc;
+  if (file) {
+    const imageRef = ref(storage, `${collectionName}/${docId}/image`);
+    await uploadString(imageRef, file, "data_url");
+    const downloadURL = await getDownloadURL(imageRef);
+    await updateDoc(doc(db, collectionName, docId), {
+      [fileName]: downloadURL,
+    });
+
+    return downloadURL;
+  }
+};
