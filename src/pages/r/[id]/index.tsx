@@ -11,6 +11,7 @@ import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import PageContent from "../../../components/Layout/PageContent";
 import CreatePostLink from "../../../components/Community/CreatePostLink";
 import Posts from "../../../components/Posts/Posts";
+import About from "../../../components/Community/About";
 
 type CommunityPageProps = {
   communityData: ICommunity;
@@ -37,7 +38,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
           <Posts communityData={communityData} />
         </>
         <>
-          <div>right content</div>
+          <About communityData={communityData} />
         </>
       </PageContent>
     </>

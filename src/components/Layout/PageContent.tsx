@@ -19,7 +19,11 @@ const PageContent: React.FC<PageContentProps> = ({ children }) => {
           {children && children[0 as keyof typeof children]}
         </Flex>
         {/* rhs */}
-        <Flex display={{ base: "none", md: "flex" }} flexGrow={1}>
+        <Flex
+          display={{ base: "none", md: "flex" }}
+          direction="column"
+          flexGrow={1}
+        >
           {children && children[1 as keyof typeof children]}
         </Flex>
       </Flex>

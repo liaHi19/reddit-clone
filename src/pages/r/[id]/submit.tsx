@@ -5,9 +5,13 @@ import { useAuth } from "../../../firebase/useAuth";
 
 import PageContent from "../../../components/Layout/PageContent";
 import NewPostForm from "../../../components/Posts/PostForm/NewPostForm";
+import { useAppSelector } from "../../../store/hooks";
 
 const SubmitPostPage: NextPage = () => {
   const { user } = useAuth();
+  const { currentCommunity } = useAppSelector((state) => state.community);
+  console.log("community", currentCommunity);
+
   return (
     <PageContent>
       <>
