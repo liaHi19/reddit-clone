@@ -2,12 +2,16 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   collection,
   doc,
+  DocumentData,
   getDocs,
   increment,
+  orderBy,
   query,
+  QueryDocumentSnapshot,
   where,
   writeBatch,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { toast } from "react-toastify";
 
 import {
@@ -17,29 +21,23 @@ import {
   IUpdatedPostVote,
 } from "../../shared/types/posts.interface";
 
-import {
-  createDocAndSaveFile,
-  deleteDocAndDeleteFile,
-  receiveDocsWithQueryAndSort,
-  receiveSubCollection,
-} from "../../firebase/firestore-helpers";
-
-import { db } from "../../firebase/clientApp";
-
-// firebase
+import { db, storage } from "../../firebase/clientApp";
 
 export const getPosts = createAsyncThunk<IPost[], string>(
   "posts/getPost",
   async (communityId, apiThunk) => {
     try {
-      const posts = await receiveDocsWithQueryAndSort(
-        { collectionName: "posts" },
-        {
-          docField: "communityId",
-          condition: "==",
-          comparedField: communityId,
-        },
-        { sortedField: "createdAt", order: "desc" }
+      const postQuery = query(
+        collection(db, "posts"),
+        where("communityId", "==", communityId),
+        orderBy("createdAt", "desc")
+      );
+      const postsSnap = await getDocs(postQuery);
+      const posts = postsSnap.docs.map(
+        (doc: QueryDocumentSnapshot<DocumentData>) => ({
+          ...doc.data(),
+          id: doc.id,
+        })
       );
 
       return posts as IPost[];
@@ -50,22 +48,30 @@ export const getPosts = createAsyncThunk<IPost[], string>(
   }
 );
 
-export const deletePost = createAsyncThunk<string, IPost>(
-  "posts/deletePost",
-  async (post, apiThunk) => {
-    try {
-      await deleteDocAndDeleteFile(
-        { collectionName: "posts", docId: post.id! },
-        post.imageURL!
-      );
-      toast.success("Post was successfully deleted");
-      return post.id as string;
-    } catch (error: any) {
-      toast.error("Can't delete post");
-      return apiThunk.rejectWithValue(error.message);
+export const deletePost = createAsyncThunk<
+  string,
+  { postId: string; uid: string; imageURL: string; voteId: string }
+>("posts/deletePost", async ({ postId, uid, imageURL, voteId }, apiThunk) => {
+  try {
+    if (imageURL) {
+      const fileRef = ref(storage, `posts/${postId}/image`);
+      await deleteObject(fileRef);
     }
+    const batch = writeBatch(db);
+    batch.delete(doc(db, "posts", postId));
+    if (voteId) {
+      batch.delete(doc(db, `users/${uid}/postVotes`, voteId));
+    }
+    batch.commit();
+
+    toast.success("Post was successfully deleted");
+
+    return postId as string;
+  } catch (error: any) {
+    toast.error("Can't delete post");
+    return apiThunk.rejectWithValue(error.message);
   }
-);
+});
 
 export const getPostVotes = createAsyncThunk<
   IPostVote[],
@@ -77,15 +83,15 @@ export const getPostVotes = createAsyncThunk<
       where("communityId", "==", communityId)
     );
     const postVotesDocs = await getDocs(postVotesQuery);
-    const postVotes = postVotesDocs.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    console.log(postVotes);
+    const postVotes = postVotesDocs.docs.map(
+      (doc: QueryDocumentSnapshot<DocumentData>) => ({
+        id: doc.id,
+        ...doc.data(),
+      })
+    );
 
     return postVotes as IPostVote[];
   } catch (error: any) {
-    console.log(error);
     return apiThunk.rejectWithValue(error.message);
   }
 });
@@ -109,7 +115,6 @@ export const createNewVote = createAsyncThunk<
 
     return newVote as IPostVote;
   } catch (error: any) {
-    console.log(error);
     toast.error("Can't vote");
     return apiThunk.rejectWithValue(error.message);
   }
@@ -136,8 +141,6 @@ export const updateVoteOnOne = createAsyncThunk<
 
       return updatedPostVote;
     } catch (error: any) {
-      console.log(error);
-
       toast.error("Can't vote");
       return apiThunk.rejectWithValue(error.message);
     }
@@ -165,7 +168,6 @@ export const updatePostVoteOnTwo = createAsyncThunk<
 
       return updatedPostVote;
     } catch (error: any) {
-      console.log(error);
       toast.error("Can't vote");
       return apiThunk.rejectWithValue(error.message);
     }

@@ -1,5 +1,4 @@
 import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { log } from "console";
 import { findById } from "../../helpers/functions";
 import { IPostsState } from "./posts.interface";
 import {
@@ -43,6 +42,9 @@ export const postsSlice = createSlice({
       .addCase(deletePost.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.posts = state.posts.filter((post) => post.id !== payload);
+        state.postVotes = state.postVotes.filter(
+          (vote) => vote.postId !== payload
+        );
       })
       .addCase(getPostVotes.pending, (state) => {
         state.loading = true;

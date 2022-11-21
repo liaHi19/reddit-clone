@@ -55,6 +55,8 @@ const PostItem: React.FC<PostItemProps> = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { onVote } = usePosts();
   const cancelRef = React.useRef();
+  const { postVotes } = useAppSelector((state) => state.posts);
+  const currentPostVote = postVotes.find((vote) => vote.postId === post.id);
 
   return (
     <>
@@ -144,7 +146,14 @@ const PostItem: React.FC<PostItemProps> = ({
       </Flex>
       <DeleteDialog
         title={`Delete Post: ${post.title}`}
-        onDelete={() => deletePost(post)}
+        onDelete={() =>
+          deletePost({
+            postId: post.id,
+            uid: post.creatorId,
+            imageURL: post.imageURL || "",
+            voteId: currentPostVote?.id!,
+          })
+        }
         isOpen={isOpen}
         onClose={onClose}
         cancelRef={cancelRef}
