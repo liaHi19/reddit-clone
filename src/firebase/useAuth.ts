@@ -25,7 +25,6 @@ export const useAuth = () => {
   const [user, loading, error] = useAuthState(auth);
   const [updateProfile] = useUpdateProfile(auth);
   const [signInWithGoogle] = useSignInWithGoogle(auth);
-  const { resetCommunity } = useActions();
 
   const createUser = async (data: IAUthInput) => {
     const { email, password } = data;
@@ -44,7 +43,6 @@ export const useAuth = () => {
 
   const logOut = async () => {
     await signOut(auth);
-    resetCommunity();
   };
 
   const resetPasswordEmail = async (email: string) => {

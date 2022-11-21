@@ -7,14 +7,22 @@ import { useAppSelector } from "../store/hooks";
 import { useActions } from "./useActions";
 
 const useCommunityData = () => {
-  const { getMySnippets, joinCommunity, leaveCommunity, handleAuthView } =
-    useActions();
+  const {
+    getMySnippets,
+    joinCommunity,
+    leaveCommunity,
+    handleAuthView,
+    resetMySnippets,
+  } = useActions();
   const { user } = useAuth();
   const { mySnippets, loading } = useAppSelector((state) => state.community);
 
   useEffect(() => {
-    if (!user) return;
-    getMySnippets(user.uid);
+    if (!user) {
+      resetMySnippets();
+      return;
+    }
+    getMySnippets(user?.uid!);
   }, [user]);
 
   const joinOrLeaveCommunity = (

@@ -7,6 +7,7 @@ import {
   Image,
   Skeleton,
   useDisclosure,
+  IconButton,
 } from "@chakra-ui/react";
 import moment from "moment";
 
@@ -21,18 +22,20 @@ import {
   IoArrowUpCircleSharp,
   IoBookmarkOutline,
 } from "react-icons/io5";
+import { HiArrowNarrowDown, HiArrowNarrowUp } from "react-icons/hi";
 
 import { useActions } from "../../hooks/useActions";
+import usePosts from "../../hooks/usePosts";
 
 import { IPost } from "../../shared/types/posts.interface";
 import PostIcon from "./PostIcon";
 import DeleteDialog from "../elements/DeleteDialog";
+import { useAppSelector } from "../../store/hooks";
 
 type PostItemProps = {
   post: IPost;
   userIsCreator: boolean;
   userVoteValue?: number;
-  // onVote: () => {};
 };
 
 const PostItem: React.FC<PostItemProps> = ({
@@ -50,7 +53,9 @@ const PostItem: React.FC<PostItemProps> = ({
 
   const { deletePost } = useActions();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onVote } = usePosts();
   const cancelRef = React.useRef();
+
   return (
     <>
       <Flex
@@ -71,28 +76,32 @@ const PostItem: React.FC<PostItemProps> = ({
           width="40px"
           borderRadius={4}
         >
-          <Icon
-            as={
-              userVoteValue === 1
-                ? IoArrowUpCircleSharp
-                : IoArrowUpCircleOutline
-            }
-            color={userVoteValue === 1 ? "brand.100" : "gray.400"}
-            fontSize={22}
+          <IconButton
+            icon={<HiArrowNarrowUp />}
+            background={userVoteValue === 1 ? "brand.100" : "gray.400"}
+            transition="all 0.3s ease-in-out"
+            _hover={{
+              background: userVoteValue === 1 ? "brand.500" : "gray.500",
+            }}
+            size="xs"
             cursor="pointer"
-            // onClick={onVote}
+            onClick={() => onVote(post, 1)}
+            isLoading={post.loading}
+            aria-label={"increase votes of the posts"}
           />
-          <Text fontSize="9pt">{post.voteStatus}</Text>
-          <Icon
-            as={
-              userVoteValue === -1
-                ? IoArrowDownCircleSharp
-                : IoArrowDownCircleOutline
-            }
-            color={userVoteValue === -1 ? "#4379ff" : "gray.400"}
-            fontSize={22}
+          <Text fontSize="10pt">{post.voteStatus}</Text>
+          <IconButton
+            icon={<HiArrowNarrowDown />}
+            background={userVoteValue === -1 ? "#4379ff" : "gray.400"}
+            transition="all 0.3s ease-in-out"
+            _hover={{
+              background: userVoteValue === -1 ? "#3b67d6" : "gray.500",
+            }}
+            size="xs"
             cursor="pointer"
-            // onClick={onVote}
+            onClick={() => onVote(post, -1)}
+            isLoading={post.loading}
+            aria-label={"decrease votes of the posts"}
           />
         </Flex>
         <Flex direction="column" width="100%">

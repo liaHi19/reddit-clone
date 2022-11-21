@@ -1,4 +1,3 @@
-import { log } from "console";
 import {
   addDoc,
   collection,
@@ -137,7 +136,26 @@ export const receiveSubCollection = async (infoCollection: ISubCollection) => {
     ...doc.data(),
     id: doc.id,
   }));
+  console.log(documents);
+
   return documents;
+};
+
+export const createNewSubDocAndUpdateDoc = async (
+  infoDoc: IDocument,
+  subInfoCollection: ISubCollection
+) => {
+  const { collectionName, docId, data } = infoDoc;
+  const { mainCollectionName, mainDocId, subCollectionName, subdata } =
+    subInfoCollection;
+
+  const batch = writeBatch(db);
+  const docRef = doc(
+    collection(db, collectionName, `${docId}/${subCollectionName}`)
+  );
+  const newSubData = { ...subdata, id: docRef.id };
+
+  batch.set(docRef, newSubData);
 };
 
 export const createSubDocAndUpdateDoc = async (

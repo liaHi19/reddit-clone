@@ -52,7 +52,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     const communityId = router.query.id as string;
 
     //form newPost
-    const newPost: IPost = {
+    const newPost: Omit<IPost, "id"> = {
       communityId,
       creatorId: user.uid,
       creatorDisplayName: user.displayName
@@ -62,6 +62,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
       body,
       numberOfComments: 0,
       voteStatus: 0,
+      loading: false,
       createdAt: moment().format(),
     };
     setLoading(true);

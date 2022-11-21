@@ -22,7 +22,9 @@ export const communitySlice = createSlice({
   name: "community",
   initialState,
   reducers: {
-    resetCommunity: () => initialState,
+    resetMySnippets: (state) => {
+      state.mySnippets = initialState.mySnippets;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -76,6 +78,6 @@ const isError = (action: AnyAction) => {
   return action.type.endsWith("rejected");
 };
 
-export const { resetCommunity } = communitySlice.actions;
+export const { resetMySnippets } = communitySlice.actions;
 
 export const { reducer } = communitySlice;

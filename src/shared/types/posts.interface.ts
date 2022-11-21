@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-
 export interface IPostInput {
   title: string;
   body?: string;
@@ -7,7 +5,7 @@ export interface IPostInput {
 }
 
 export interface IPost {
-  id?: string;
+  id: string;
   communityId: string;
   creatorId: string;
   creatorDisplayName: string;
@@ -17,5 +15,17 @@ export interface IPost {
   voteStatus: number;
   imageURL?: string;
   communityImageURL?: string;
+  loading: boolean;
   createdAt: string;
 }
+
+export interface IPostVote {
+  id: string;
+  postId: string;
+  communityId: string;
+  voteValue: number;
+}
+
+export type INewPostVote = Omit<IPostVote, "id">;
+
+export type IUpdatedPostVote = Omit<IPostVote, "communityId">;
