@@ -56,7 +56,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: { communityData: docSnap.exists() ? communityData : "" },
     };
   } catch (error) {
-    console.log(error);
     return {
       notFound: true,
     };

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, MouseEvent } from "react";
+import { useRouter } from "next/router";
+import moment from "moment";
 import {
   Flex,
-  Icon,
   Stack,
   Text,
   Image,
@@ -9,7 +10,6 @@ import {
   useDisclosure,
   IconButton,
 } from "@chakra-ui/react";
-import moment from "moment";
 
 import { AiOutlineDelete } from "react-icons/ai";
 import { BsChat, BsDot } from "react-icons/bs";
@@ -28,55 +28,63 @@ import { useActions } from "../../hooks/useActions";
 import usePosts from "../../hooks/usePosts";
 
 import { IPost } from "../../shared/types/posts.interface";
+
 import PostIcon from "./PostIcon";
 import DeleteDialog from "../elements/DeleteDialog";
-import { useAppSelector } from "../../store/hooks";
 
 type PostItemProps = {
   post: IPost;
   userIsCreator: boolean;
+  voteId: string;
   userVoteValue?: number;
+  fromPosts?: boolean;
 };
 
 const PostItem: React.FC<PostItemProps> = ({
   post,
   userIsCreator,
+  voteId,
   userVoteValue,
+  fromPosts,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
+  const router = useRouter();
+
+  const { deletePost } = useActions();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onVote } = usePosts();
+  const cancelRef = React.useRef();
+  const isSinglePost = !fromPosts;
 
   const postIcons = [
     { id: 1, icon: BsChat, text: post.numberOfComments },
     { id: 2, icon: IoArrowRedoOutline, text: "Share" },
     { id: 3, icon: IoBookmarkOutline, text: "Save" },
   ];
-
-  const { deletePost } = useActions();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { onVote } = usePosts();
-  const cancelRef = React.useRef();
-  const { postVotes } = useAppSelector((state) => state.posts);
-  const currentPostVote = postVotes.find((vote) => vote.postId === post.id);
+  console.log(isSinglePost);
 
   return (
     <>
       <Flex
         border="1px solid"
         bg="white"
-        borderColor="gray.300"
-        borderRadius={4}
+        borderColor={isSinglePost ? "white" : "gray.300"}
+        borderRadius={isSinglePost ? "4px 4px 0px 0px" : "4px"}
         transition="all 0.3s ease-in-out"
-        cursor="pointer"
-        _hover={{ borderColor: "gray.500" }}
-        // onClick={onSelectPost}
+        cursor={isSinglePost ? "unset" : "pointer"}
+        _hover={{ borderColor: isSinglePost ? "none" : "gray.500" }}
+        onClick={() =>
+          !isSinglePost &&
+          router.push(`/r/${post.communityId}/comments/${post.id}`)
+        }
       >
         <Flex
           direction="column"
           align="center"
-          bg="gray.100"
+          bg={isSinglePost ? "none" : "gray.100"}
           p={2}
           width="40px"
-          borderRadius={4}
+          borderRadius={isSinglePost ? "0" : "3px 0px 0px 3px"}
         >
           <IconButton
             icon={<HiArrowNarrowUp />}
@@ -87,7 +95,7 @@ const PostItem: React.FC<PostItemProps> = ({
             }}
             size="xs"
             cursor="pointer"
-            onClick={() => onVote(post, 1)}
+            onClick={(event) => onVote(event, post, 1)}
             isLoading={post.loading}
             aria-label={"increase votes of the posts"}
           />
@@ -101,7 +109,7 @@ const PostItem: React.FC<PostItemProps> = ({
             }}
             size="xs"
             cursor="pointer"
-            onClick={() => onVote(post, -1)}
+            onClick={(event) => onVote(event, post, -1)}
             isLoading={post.loading}
             aria-label={"decrease votes of the posts"}
           />
@@ -139,21 +147,31 @@ const PostItem: React.FC<PostItemProps> = ({
               <PostIcon key={id} icon={icon} text={text} />
             ))}
             {userIsCreator && (
-              <PostIcon icon={AiOutlineDelete} text="Delete" onOpen={onOpen} />
+              <PostIcon
+                icon={AiOutlineDelete}
+                text="Delete"
+                onOpen={(event: MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                  event.stopPropagation();
+                  onOpen();
+                }}
+              />
             )}
           </Flex>
         </Flex>
       </Flex>
       <DeleteDialog
         title={`Delete Post: ${post.title}`}
-        onDelete={() =>
+        onDelete={() => {
           deletePost({
             postId: post.id,
             uid: post.creatorId,
             imageURL: post.imageURL || "",
-            voteId: currentPostVote?.id!,
-          })
-        }
+            voteId,
+          });
+          if (isSinglePost) {
+            router.push(`/r/${post.communityId}`);
+          }
+        }}
         isOpen={isOpen}
         onClose={onClose}
         cancelRef={cancelRef}

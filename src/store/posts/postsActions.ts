@@ -22,6 +22,7 @@ import {
 } from "../../shared/types/posts.interface";
 
 import { db, storage } from "../../firebase/clientApp";
+import { receiveDoc } from "../../firebase/firestore-helpers";
 
 export const getPosts = createAsyncThunk<IPost[], string>(
   "posts/getPost",
@@ -173,3 +174,40 @@ export const updatePostVoteOnTwo = createAsyncThunk<
     }
   }
 );
+
+export const getSelectedPost = createAsyncThunk<IPost, string>(
+  "posts/getSelectedPost",
+  async (postId, apiThunk) => {
+    try {
+      const { document: selectedPost } = await receiveDoc({
+        collectionName: "posts",
+        docId: postId,
+      });
+      return selectedPost as IPost;
+    } catch (error: any) {
+      return apiThunk.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getPostVote = createAsyncThunk<
+  IPostVote[],
+  { uid: string; postId: string }
+>("posts/getPostVote", async ({ uid, postId }, apiThunk) => {
+  try {
+    const postVotesQuery = query(
+      collection(db, "users", `${uid}/postVotes`),
+      where("postId", "==", postId)
+    );
+    const postVotesDocs = await getDocs(postVotesQuery);
+    const postVotes = postVotesDocs.docs.map(
+      (doc: QueryDocumentSnapshot<DocumentData>) => ({
+        id: doc.id,
+        ...doc.data(),
+      })
+    );
+    return postVotes as IPostVote[];
+  } catch (error: any) {
+    return apiThunk.rejectWithValue(error.message);
+  }
+});

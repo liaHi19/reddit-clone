@@ -1,11 +1,15 @@
 import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { findById } from "../../helpers/functions";
 import { IPostsState } from "./posts.interface";
+
 import {
   createNewVote,
   deletePost,
   getPosts,
+  getPostVote,
   getPostVotes,
+  getSelectedPost,
   updatePostVoteOnTwo,
   updateVoteOnOne,
 } from "./postsActions";
@@ -13,6 +17,7 @@ import {
 const initialState: IPostsState = {
   loading: false,
   posts: [],
+  selectedPost: null,
   postVotes: [],
   error: null,
 };
@@ -45,6 +50,9 @@ export const postsSlice = createSlice({
         state.postVotes = state.postVotes.filter(
           (vote) => vote.postId !== payload
         );
+        if (state.selectedPost) {
+          state.selectedPost = null;
+        }
       })
       .addCase(getPostVotes.pending, (state) => {
         state.loading = true;
@@ -60,6 +68,9 @@ export const postsSlice = createSlice({
         if (currentPost) {
           currentPost.loading = true;
         }
+        if (state.selectedPost) {
+          state.selectedPost.loading = true;
+        }
         state.error = null;
       })
       .addCase(createNewVote.fulfilled, (state, { payload }) => {
@@ -67,6 +78,11 @@ export const postsSlice = createSlice({
         if (currentPost) {
           currentPost.loading = false;
           currentPost.voteStatus = currentPost?.voteStatus + payload.voteValue;
+        }
+        if (state.selectedPost) {
+          state.selectedPost.loading = false;
+          state.selectedPost.voteStatus =
+            state.selectedPost.voteStatus + payload.voteValue;
         }
         state.postVotes.push(payload);
       })
@@ -76,13 +92,21 @@ export const postsSlice = createSlice({
         if (currentPost) {
           currentPost.loading = true;
         }
+        if (state.selectedPost) {
+          state.selectedPost.loading = true;
+        }
         state.error = null;
       })
       .addCase(updateVoteOnOne.fulfilled, (state, { payload }) => {
         const currentPost = findById(state.posts, payload.postId);
         if (currentPost) {
-          currentPost.voteStatus = currentPost.voteStatus - payload.voteValue;
           currentPost.loading = false;
+          currentPost.voteStatus = currentPost.voteStatus - payload.voteValue;
+        }
+        if (state.selectedPost) {
+          state.selectedPost.loading = false;
+          state.selectedPost.voteStatus =
+            state.selectedPost.voteStatus - payload.voteValue;
         }
         state.postVotes = state.postVotes.filter(
           (postVote) => postVote.id !== payload.id
@@ -94,21 +118,45 @@ export const postsSlice = createSlice({
         if (currentPost) {
           currentPost.loading = true;
         }
+        if (state.selectedPost) {
+          state.selectedPost.loading = true;
+        }
         state.error = null;
       })
       .addCase(updatePostVoteOnTwo.fulfilled, (state, { payload }) => {
         const currentPost = findById(state.posts, payload.postId);
 
         if (currentPost) {
+          currentPost.loading = false;
           currentPost.voteStatus =
             currentPost.voteStatus + 2 * payload.voteValue;
-          currentPost.loading = false;
+        }
+        if (state.selectedPost) {
+          state.selectedPost.loading = false;
+          state.selectedPost.voteStatus =
+            state.selectedPost.voteStatus + 2 * payload.voteValue;
         }
         state.postVotes = state.postVotes.map((postVote) =>
           postVote.id === payload.id
             ? { ...postVote, voteValue: payload.voteValue }
             : postVote
         );
+      })
+      .addCase(getSelectedPost.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getSelectedPost.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.selectedPost = payload;
+      })
+      .addCase(getPostVote.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPostVote.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.postVotes = payload;
       })
       .addMatcher(isError, (state, action: PayloadAction<string>) => {
         (state.loading = false), (state.error = action.payload);

@@ -1,12 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, MouseEvent, ReactElement } from "react";
+
 import { useAuth } from "../firebase/useAuth";
+import { useAppSelector } from "../store/hooks";
+import { useActions } from "./useActions";
+
 import {
   INewPostVote,
   IUpdatedPostVote,
   IPost,
 } from "../shared/types/posts.interface";
-import { useAppSelector } from "../store/hooks";
-import { useActions } from "./useActions";
 
 const usePosts = () => {
   const { postVotes } = useAppSelector((state) => state.posts);
@@ -27,7 +29,12 @@ const usePosts = () => {
     }
   }, [user]);
 
-  const onVote = (post: IPost, vote: number) => {
+  const onVote = (
+    event: MouseEvent<ReactElement, MouseEvent>,
+    post: IPost,
+    vote: number
+  ) => {
+    event.stopPropagation();
     const existingVote = postVotes.find((vote) => vote.postId === post.id);
     let voteChange = vote;
 

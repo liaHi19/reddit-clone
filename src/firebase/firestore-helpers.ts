@@ -136,7 +136,6 @@ export const receiveSubCollection = async (infoCollection: ISubCollection) => {
     ...doc.data(),
     id: doc.id,
   }));
-  console.log(documents);
 
   return documents;
 };
