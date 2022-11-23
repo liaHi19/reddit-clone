@@ -5,16 +5,22 @@ import { useRouter } from "next/router";
 import { useAuth } from "../../../../firebase/useAuth";
 import { useActions } from "../../../../hooks/useActions";
 import { useAppSelector } from "../../../../store/hooks";
+import useCommunityData from "../../../../hooks/useCommunityData";
 
 import PageContent from "../../../../components/Layout/PageContent";
 import PostItem from "../../../../components/Posts/PostItem";
+import About from "../../../../components/Community/About";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
   const { postVotes, selectedPost } = useAppSelector((state) => state.posts);
+  const { currentCommunity } = useAppSelector((state) => state.community);
   const { user } = useAuth();
   const { getSelectedPost, getPostVote } = useActions();
+
   const { pid } = router.query;
+
+  useCommunityData();
 
   useEffect(() => {
     if (pid && !selectedPost) {
@@ -45,7 +51,7 @@ const PostPage: NextPage = () => {
           />
         )}
       </>
-      <></>
+      <>{currentCommunity && <About communityData={currentCommunity} />}</>
     </PageContent>
   );
 };

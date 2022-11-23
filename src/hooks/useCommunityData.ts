@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 import { useAuth } from "../firebase/useAuth";
@@ -13,9 +14,14 @@ const useCommunityData = () => {
     leaveCommunity,
     handleAuthView,
     resetMySnippets,
+    getCurrentCommunity,
   } = useActions();
   const { user } = useAuth();
-  const { mySnippets, loading } = useAppSelector((state) => state.community);
+  const { mySnippets, loading, currentCommunity } = useAppSelector(
+    (state) => state.community
+  );
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!user) {
@@ -24,6 +30,13 @@ const useCommunityData = () => {
     }
     getMySnippets(user?.uid!);
   }, [user]);
+
+  useEffect(() => {
+    const { id } = router.query;
+    if (id && !currentCommunity) {
+      getCurrentCommunity(id as string);
+    }
+  }, [router.query, currentCommunity]);
 
   const joinOrLeaveCommunity = (
     communityData: ICommunity,

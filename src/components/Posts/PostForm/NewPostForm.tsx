@@ -79,7 +79,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
       toast.error("Can't create a post");
       setLoading(false);
     }
-    router.back();
+    router.push(`/r/${communityId}`);
   };
 
   return (

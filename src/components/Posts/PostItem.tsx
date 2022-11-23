@@ -61,7 +61,6 @@ const PostItem: React.FC<PostItemProps> = ({
     { id: 2, icon: IoArrowRedoOutline, text: "Share" },
     { id: 3, icon: IoBookmarkOutline, text: "Save" },
   ];
-  console.log(isSinglePost);
 
   return (
     <>

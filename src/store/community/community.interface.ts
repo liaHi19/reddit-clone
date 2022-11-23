@@ -7,6 +7,6 @@ export interface ICommunityState {
   loading: boolean;
   uploadingImage?: boolean;
   mySnippets: ICommunitySnippet[];
-  currentCommunity?: ICommunity;
+  currentCommunity: ICommunity | null;
   error: string | null;
 }

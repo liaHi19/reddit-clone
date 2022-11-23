@@ -14,7 +14,7 @@ const initialState: ICommunityState = {
   loading: false,
   uploadingImage: false,
   mySnippets: [],
-  currentCommunity: {} as ICommunity,
+  currentCommunity: null,
   error: null,
 };
 

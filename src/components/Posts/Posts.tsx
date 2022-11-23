@@ -9,6 +9,7 @@ import { useAppSelector } from "../../store/hooks";
 
 import PostItem from "./PostItem";
 import PostLoader from "./PostLoader";
+import usePosts from "../../hooks/usePosts";
 
 type PostsProps = {
   communityData: ICommunity;
