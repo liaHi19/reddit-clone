@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useEffect, MouseEvent, ReactElement } from "react";
 
 import { useAuth } from "../firebase/useAuth";
@@ -13,12 +14,14 @@ import {
 const usePosts = () => {
   const { postVotes } = useAppSelector((state) => state.posts);
   const { user } = useAuth();
+  const router = useRouter();
 
   const {
     createNewVote,
     updateVoteOnOne,
     updatePostVoteOnTwo,
     resetPostVotes,
+    getSelectedPost,
     handleAuthView,
   } = useActions();
 
@@ -28,6 +31,11 @@ const usePosts = () => {
       return;
     }
   }, [user]);
+
+  const onSelectPost = (post: IPost) => {
+    getSelectedPost(post.id);
+    router.push(`/r/${post.communityId}/comments/${post.id}`);
+  };
 
   const onVote = (
     event: MouseEvent<ReactElement, MouseEvent>,
@@ -66,7 +74,7 @@ const usePosts = () => {
     }
   };
 
-  return { onVote };
+  return { onVote, onSelectPost };
 };
 
 export default usePosts;

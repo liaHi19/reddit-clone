@@ -19,6 +19,7 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
   const { getPosts, getPostVotes } = useActions();
   const { posts, loading, postVotes } = useAppSelector((state) => state.posts);
   const { user } = useAuth();
+  const { onSelectPost } = usePosts();
 
   useEffect(() => {
     if (!communityData?.id) return;
@@ -45,7 +46,7 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
               userVoteValue={
                 postVotes.find((vote) => vote.postId === post.id)?.voteValue
               }
-              fromPosts={true}
+              onSelectPost={onSelectPost}
             />
           ))}
         </Stack>

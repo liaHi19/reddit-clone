@@ -37,7 +37,7 @@ type PostItemProps = {
   userIsCreator: boolean;
   voteId: string;
   userVoteValue?: number;
-  fromPosts?: boolean;
+  onSelectPost?: (post: IPost) => void;
 };
 
 const PostItem: React.FC<PostItemProps> = ({
@@ -45,7 +45,7 @@ const PostItem: React.FC<PostItemProps> = ({
   userIsCreator,
   voteId,
   userVoteValue,
-  fromPosts,
+  onSelectPost,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const router = useRouter();
@@ -54,7 +54,7 @@ const PostItem: React.FC<PostItemProps> = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { onVote } = usePosts();
   const cancelRef = React.useRef();
-  const isSinglePost = !fromPosts;
+  const isSinglePost = !onSelectPost;
 
   const postIcons = [
     { id: 1, icon: BsChat, text: post.numberOfComments },
@@ -72,10 +72,7 @@ const PostItem: React.FC<PostItemProps> = ({
         transition="all 0.3s ease-in-out"
         cursor={isSinglePost ? "unset" : "pointer"}
         _hover={{ borderColor: isSinglePost ? "none" : "gray.500" }}
-        onClick={() =>
-          !isSinglePost &&
-          router.push(`/r/${post.communityId}/comments/${post.id}`)
-        }
+        onClick={() => onSelectPost && onSelectPost(post)}
       >
         <Flex
           direction="column"
