@@ -26,6 +26,23 @@ export interface IPostVote {
   voteValue: number;
 }
 
+export interface IComment {
+  id: string;
+  creatorId: string;
+  creatorDisplayText: string;
+  communityId: string;
+  postId: string;
+  postTitle: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface IPostComment {
+  commentText: string;
+}
+
 export type INewPostVote = Omit<IPostVote, "id">;
 
 export type IUpdatedPostVote = Omit<IPostVote, "communityId">;
+
+export type INewComment = Omit<IComment, "id">;

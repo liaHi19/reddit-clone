@@ -10,7 +10,6 @@ import MyInput from "../../elements/MyInput";
 import MyTextarea from "../../elements/MyTextarea";
 
 import { IPostInput } from "../../../shared/types/posts.interface";
-import { useAppSelector } from "../../../store/hooks";
 
 type TextInputsProps = {
   register: UseFormRegister<IPostInput>;

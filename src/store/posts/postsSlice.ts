@@ -14,6 +14,8 @@ import {
   updateVoteOnOne,
 } from "./postsActions";
 
+import { createComment } from "../comments/commentsActions";
+
 const initialState: IPostsState = {
   loading: false,
   posts: [],
@@ -157,6 +159,12 @@ export const postsSlice = createSlice({
       .addCase(getPostVote.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.postVotes = payload;
+      })
+      .addCase(createComment.fulfilled, (state) => {
+        if (state.selectedPost) {
+          state.selectedPost.numberOfComments =
+            state.selectedPost.numberOfComments + 1;
+        }
       })
       .addMatcher(isError, (state, action: PayloadAction<string>) => {
         (state.loading = false), (state.error = action.payload);

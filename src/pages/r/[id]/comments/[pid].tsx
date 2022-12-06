@@ -7,9 +7,11 @@ import { useActions } from "../../../../hooks/useActions";
 import { useAppSelector } from "../../../../store/hooks";
 import useCommunityData from "../../../../hooks/useCommunityData";
 
-import PageContent from "../../../../components/Layout/PageContent";
 import PostItem from "../../../../components/Posts/PostItem";
+import Comments from "../../../../components/Posts/Comments/Comments";
 import About from "../../../../components/Community/About";
+import PageContent from "../../../../components/Layout/PageContent";
+import { User } from "firebase/auth";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
@@ -50,6 +52,11 @@ const PostPage: NextPage = () => {
             }
           />
         )}
+        <Comments
+          user={user as User}
+          selectedPost={selectedPost}
+          communityId={currentCommunity?.id as string}
+        />
       </>
       <>{currentCommunity && <About communityData={currentCommunity} />}</>
     </PageContent>
