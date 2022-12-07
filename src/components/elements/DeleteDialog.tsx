@@ -9,26 +9,32 @@ import {
   Button,
 } from "@chakra-ui/react";
 
+import { useAppSelector } from "../../store/hooks";
+import { useActions } from "../../hooks/useActions";
+
 type DeleteDialogProps = {
   title: string;
-  isOpen: boolean;
   onDelete: () => void;
-  onClose: () => void;
   cancelRef: any;
 };
 
 const DeleteDialog: React.FC<DeleteDialogProps> = ({
   title,
-  isOpen,
   onDelete,
-  onClose,
   cancelRef,
 }) => {
+  const { deleteConfirm } = useAppSelector((state) => state.dialog);
+  const { hideDeleteConfirm, hideEdit } = useActions();
+
+  const closeConfirm = () => {
+    hideEdit();
+    hideDeleteConfirm();
+  };
   return (
     <AlertDialog
-      isOpen={isOpen}
+      isOpen={deleteConfirm}
       leastDestructiveRef={cancelRef}
-      onClose={onClose}
+      onClose={closeConfirm}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
@@ -46,7 +52,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
               variant="outline"
               height="34px"
               padding="0px 30px"
-              onClick={onClose}
+              onClick={closeConfirm}
             >
               Cancel
             </Button>
@@ -56,7 +62,10 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
               height="34px"
               padding="0px 30px"
               _hover={{ bg: "red.600" }}
-              onClick={onDelete}
+              onClick={() => {
+                onDelete();
+                closeConfirm();
+              }}
               ml={3}
             >
               Delete

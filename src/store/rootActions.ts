@@ -2,7 +2,15 @@ import {
   handleAuthView,
   showAuthModal,
   hideAuthModal,
-} from "./authDialog/authModalSlice";
+} from "./dialog/authModalSlice";
+import {
+  showModal,
+  hideModal,
+  showDeleteConfirm,
+  hideDeleteConfirm,
+  startEdit,
+  hideEdit,
+} from "./dialog/dialogSlice";
 import { resetMySnippets } from "./community/communitySlice";
 import { resetPostVotes } from "./posts/postsSlice";
 import { resetComments } from "./comments/commentsSlice";
@@ -14,6 +22,12 @@ export const allActions = {
   handleAuthView,
   showAuthModal,
   hideAuthModal,
+  showModal,
+  hideModal,
+  startEdit,
+  hideEdit,
+  showDeleteConfirm,
+  hideDeleteConfirm,
   resetMySnippets,
   resetPostVotes,
   resetComments,

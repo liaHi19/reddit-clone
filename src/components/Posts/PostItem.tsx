@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent } from "react";
+import React, { useState, MouseEvent, useRef } from "react";
 import { useRouter } from "next/router";
 import moment from "moment";
 import {
@@ -7,7 +7,6 @@ import {
   Text,
   Image,
   Skeleton,
-  useDisclosure,
   IconButton,
 } from "@chakra-ui/react";
 
@@ -31,6 +30,7 @@ import { IPost } from "../../shared/types/posts.interface";
 
 import PostIcon from "./PostIcon";
 import DeleteDialog from "../elements/DeleteDialog";
+import { useAppSelector } from "../../store/hooks";
 
 type PostItemProps = {
   post: IPost;
@@ -48,13 +48,19 @@ const PostItem: React.FC<PostItemProps> = ({
   onSelectPost,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
+  const cancelRef = useRef();
   const router = useRouter();
 
-  const { deletePost } = useActions();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { deletePost, showDeleteConfirm, startEdit } = useActions();
   const { onVote } = usePosts();
-  const cancelRef = React.useRef();
+
+  const { item } = useAppSelector((state) => state.dialog);
+
   const isSinglePost = !onSelectPost;
+  const openDeleteConfirm = () => {
+    startEdit(post);
+    showDeleteConfirm();
+  };
 
   const postIcons = [
     { id: 1, icon: BsChat, text: post.numberOfComments },
@@ -148,30 +154,34 @@ const PostItem: React.FC<PostItemProps> = ({
                 text="Delete"
                 onOpen={(event: MouseEvent<HTMLButtonElement, MouseEvent>) => {
                   event.stopPropagation();
-                  onOpen();
+                  openDeleteConfirm();
                 }}
+                postId={post.id}
+                post={post}
+                voteId={voteId}
+                isSinglePost={isSinglePost}
               />
             )}
           </Flex>
         </Flex>
       </Flex>
-      <DeleteDialog
-        title={`Delete Post: ${post.title}`}
-        onDelete={() => {
-          deletePost({
-            postId: post.id,
-            uid: post.creatorId,
-            imageURL: post.imageURL || "",
-            voteId,
-          });
-          if (isSinglePost) {
-            router.push(`/r/${post.communityId}`);
-          }
-        }}
-        isOpen={isOpen}
-        onClose={onClose}
-        cancelRef={cancelRef}
-      />
+      {item && (
+        <DeleteDialog
+          title={`Delete Post: ${item.title}`}
+          onDelete={() => {
+            deletePost({
+              postId: item.id,
+              uid: item.creatorId,
+              imageURL: item.imageURL || "",
+              voteId,
+            });
+            if (isSinglePost) {
+              router.push(`/r/${post.communityId}`);
+            }
+          }}
+          cancelRef={cancelRef}
+        />
+      )}
     </>
   );
 };

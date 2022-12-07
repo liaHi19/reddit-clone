@@ -11,14 +11,14 @@ export const authModalSlice = createSlice({
   name: "authModal",
   initialState,
   reducers: {
-    handleAuthView(state, action: PayloadAction<IView>) {
+    handleAuthView: (state, action: PayloadAction<IView>) => {
       state.open = true;
       state.view = action.payload;
     },
-    showAuthModal(state) {
+    showAuthModal: (state) => {
       state.open = true;
     },
-    hideAuthModal(state) {
+    hideAuthModal: (state) => {
       state.open = false;
     },
   },
