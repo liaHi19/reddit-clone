@@ -34,6 +34,7 @@ export interface IComment {
   postId: string;
   postTitle: string;
   text: string;
+  isEdited: boolean;
   createdAt: string;
 }
 

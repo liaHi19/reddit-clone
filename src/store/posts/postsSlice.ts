@@ -14,7 +14,7 @@ import {
   updateVoteOnOne,
 } from "./postsActions";
 
-import { createComment } from "../comments/commentsActions";
+import { createComment, deletePostComment } from "../comments/commentsActions";
 
 const initialState: IPostsState = {
   loading: false,
@@ -47,8 +47,6 @@ export const postsSlice = createSlice({
         state.error = null;
       })
       .addCase(deletePost.fulfilled, (state, { payload }) => {
-        console.log();
-
         state.loading = false;
         state.posts = state.posts.filter((post) => post.id !== payload);
         state.postVotes = state.postVotes.filter(
@@ -166,6 +164,12 @@ export const postsSlice = createSlice({
         if (state.selectedPost) {
           state.selectedPost.numberOfComments =
             state.selectedPost.numberOfComments + 1;
+        }
+      })
+      .addCase(deletePostComment.fulfilled, (state) => {
+        if (state.selectedPost) {
+          state.selectedPost.numberOfComments =
+            state.selectedPost.numberOfComments - 1;
         }
       })
       .addMatcher(isError, (state, action: PayloadAction<string>) => {

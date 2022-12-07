@@ -3,10 +3,13 @@ import {
   collection,
   doc,
   DocumentData,
+  getDoc,
   getDocs,
   increment,
+  orderBy,
   query,
   QueryDocumentSnapshot,
+  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -29,7 +32,7 @@ export const createComment = createAsyncThunk<IComment, INewComment>(
 
       batch.update(postRef, { numberOfComments: increment(1) });
       batch.commit();
-      return comment;
+      return comment as IComment;
     } catch (error: any) {
       toast.error("Can't create a comment");
       return apiThunk.rejectWithValue(error.message);
@@ -43,7 +46,8 @@ export const getPostComments = createAsyncThunk<IComment[], string>(
     try {
       const posCommentsQuery = query(
         collection(db, "comments"),
-        where("postId", "==", postId)
+        where("postId", "==", postId),
+        orderBy("createdAt", "desc")
       );
       const postCommentsDocs = await getDocs(posCommentsQuery);
       const postComments = postCommentsDocs.docs.map(
@@ -55,9 +59,48 @@ export const getPostComments = createAsyncThunk<IComment[], string>(
 
       return postComments as IComment[];
     } catch (error: any) {
-      console.log(error);
-
       toast.error("Can't fetch comments");
+      return apiThunk.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deletePostComment = createAsyncThunk<
+  string,
+  {
+    commentId: string;
+    postId: string;
+  }
+>("comments/deletePostComment", async ({ commentId, postId }, apiThunk) => {
+  try {
+    const commentRef = doc(db, "comments", commentId);
+    const postRef = doc(db, "posts", postId);
+
+    const batch = writeBatch(db);
+    batch.delete(commentRef);
+    batch.update(postRef, { numberOfComments: increment(-1) });
+    batch.commit();
+
+    return commentId;
+  } catch (error: any) {
+    toast.error("Can't delete comment");
+    return apiThunk.rejectWithValue(error.message);
+  }
+});
+
+export const updatePostComment = createAsyncThunk<IComment, IComment>(
+  "comments/updatePostComment",
+  async (updatedComment, apiThunk) => {
+    try {
+      const commentRef = doc(db, "comments", updatedComment.id);
+      await updateDoc(commentRef, {
+        text: updatedComment.text,
+        isEdited: true,
+      });
+
+      return updatedComment;
+    } catch (error: any) {
+      toast.error("Can't delete comment");
       return apiThunk.rejectWithValue(error.message);
     }
   }

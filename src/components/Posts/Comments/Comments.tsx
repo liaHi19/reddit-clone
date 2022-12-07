@@ -38,15 +38,23 @@ const Comments: React.FC<CommentsProps> = ({
     mode: "onChange",
   });
 
-  const { createComment, getPostComments } = useActions();
+  const { createComment, getPostComments, updatePostComment, hideEdit } =
+    useActions();
   const { comments, createLoading, loading } = useAppSelector(
     (state) => state.comments
   );
+  const { edit, item } = useAppSelector((state) => state.dialog);
 
   useEffect(() => {
     if (!selectedPost?.id) return;
     getPostComments(selectedPost?.id!);
   }, [selectedPost?.id]);
+
+  useEffect(() => {
+    if (edit) {
+      reset({ commentText: item.text });
+    }
+  }, [item, edit]);
 
   const onCreateComment = (data: IPostComment) => {
     const newComment: INewComment = {
@@ -56,10 +64,13 @@ const Comments: React.FC<CommentsProps> = ({
       postId: selectedPost?.id!,
       postTitle: selectedPost?.title!,
       text: data.commentText,
+      isEdited: false,
       createdAt: moment().format(),
     };
-    createComment(newComment);
+    const updatedComment = { ...item, text: data.commentText, isEdited: true };
+    edit ? updatePostComment(updatedComment) : createComment(newComment);
     reset({ commentText: "" });
+    edit && hideEdit();
   };
 
   return (

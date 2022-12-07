@@ -1,13 +1,5 @@
 import React, { useRef } from "react";
-import {
-  Box,
-  Flex,
-  Icon,
-  Spinner,
-  Stack,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
 import {
   IoArrowUpCircleOutline,
@@ -21,6 +13,7 @@ import { IComment } from "../../../shared/types/posts.interface";
 
 import DeleteDialog from "../../elements/DeleteDialog";
 import ModalDialog from "../../elements/ModalDialog";
+import EditCommentInput from "./EditCommentInput";
 
 type CommentItemProps = {
   userId: string;
@@ -28,15 +21,12 @@ type CommentItemProps = {
 };
 
 const CommentItem: React.FC<CommentItemProps> = ({ userId, comment }) => {
-  const { showModal, showDeleteConfirm, startEdit } = useActions();
+  const { showModal, showDeleteConfirm, startEdit, deletePostComment } =
+    useActions();
   const cancelRef = useRef();
-  const { deleteLoading } = useAppSelector((state) => state.comments);
   const { item } = useAppSelector((state) => state.dialog);
+  const { deleteLoading } = useAppSelector((state) => state.comments);
 
-  const openModal = () => {
-    startEdit(comment);
-    showModal();
-  };
   const openDeleteConfirm = () => {
     startEdit(comment);
     showDeleteConfirm();
@@ -51,7 +41,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ userId, comment }) => {
           <Stack direction="row" align="center" fontSize="8pt">
             <Text fontWeight={700}>{comment.creatorDisplayText}</Text>
             <Text color="gray.600">{moment(comment.createdAt).fromNow()}</Text>
-            {deleteLoading && <Spinner size="sm" />}
+            {comment.isEdited && <Text color="gray.700">edited</Text>}
           </Stack>
           <Text fontSize="10pt">{comment.text}</Text>
           <Stack
@@ -67,7 +57,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ userId, comment }) => {
                 <Text
                   fontSize="9pt"
                   _hover={{ color: "blue.500" }}
-                  onClick={openModal}
+                  onClick={() => startEdit(comment)}
                 >
                   Edit
                 </Text>
@@ -84,20 +74,18 @@ const CommentItem: React.FC<CommentItemProps> = ({ userId, comment }) => {
         </Stack>
       </Flex>
       {item && (
-        <ModalDialog
-          modalHeader={`Edit comment ${item.text
+        <DeleteDialog
+          title={`Delete Comment: ${item.text
             .split(" ")
             .slice(0, 4)
-            .join(" ")}... `}
-          modalBody={<>Body</>}
-        />
-      )}
-      {item && (
-        <DeleteDialog
-          title={`Delete Post: ${item.text.split(" ").slice(0, 4).join(" ")}`}
+            .join(" ")}`}
           onDelete={() => {
-            console.log(item.text);
+            deletePostComment({
+              commentId: item.id,
+              postId: item.postId,
+            });
           }}
+          loading={deleteLoading}
           cancelRef={cancelRef}
         />
       )}

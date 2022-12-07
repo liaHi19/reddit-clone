@@ -16,12 +16,14 @@ type DeleteDialogProps = {
   title: string;
   onDelete: () => void;
   cancelRef: any;
+  loading?: boolean;
 };
 
 const DeleteDialog: React.FC<DeleteDialogProps> = ({
   title,
   onDelete,
   cancelRef,
+  loading,
 }) => {
   const { deleteConfirm } = useAppSelector((state) => state.dialog);
   const { hideDeleteConfirm, hideEdit } = useActions();
@@ -67,6 +69,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
                 closeConfirm();
               }}
               ml={3}
+              isLoading={loading}
             >
               Delete
             </Button>

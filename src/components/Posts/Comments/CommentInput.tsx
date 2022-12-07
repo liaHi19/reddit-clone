@@ -26,7 +26,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
   createLoading,
   register,
   handleSubmit,
-  formState: { errors, isValid },
+  formState: { errors, isValid, isDirty },
   onCreateComment,
 }) => {
   return (
@@ -58,7 +58,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
           >
             <Button
               height="26px"
-              disabled={!isValid}
+              disabled={!(isValid && isDirty)}
               isLoading={createLoading}
               onClick={handleSubmit(onCreateComment)}
             >

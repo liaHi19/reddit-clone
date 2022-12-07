@@ -156,10 +156,6 @@ const PostItem: React.FC<PostItemProps> = ({
                   event.stopPropagation();
                   openDeleteConfirm();
                 }}
-                postId={post.id}
-                post={post}
-                voteId={voteId}
-                isSinglePost={isSinglePost}
               />
             )}
           </Flex>
@@ -176,7 +172,7 @@ const PostItem: React.FC<PostItemProps> = ({
               voteId,
             });
             if (isSinglePost) {
-              router.push(`/r/${post.communityId}`);
+              router.push(`/r/${item.communityId}`);
             }
           }}
           cancelRef={cancelRef}

@@ -30,22 +30,12 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
   };
 
   return (
-    <Modal isOpen={modalOpen} onClose={closeModal}>
+    <Modal isOpen={modalOpen} onClose={closeModal} size="lg">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          pb={6}
-        >
-          <Flex direction="column" align="center" justify="center" width="90%">
-            {modalBody}
-          </Flex>
-        </ModalBody>
+        <ModalBody>{modalBody}</ModalBody>
       </ModalContent>
     </Modal>
   );
