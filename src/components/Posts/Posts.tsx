@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
-import { Flex, Stack, Text } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 
 import { useActions } from "../../hooks/useActions";
 import { useAuth } from "../../firebase/useAuth";
 
 import { ICommunity } from "../../shared/types/community.interface";
 import { useAppSelector } from "../../store/hooks";
+import usePosts from "../../hooks/usePosts";
 
 import PostItem from "./PostItem";
 import PostLoader from "./PostLoader";
-import usePosts from "../../hooks/usePosts";
+import CheckMessage from "../elements/CheckMessage";
 
 type PostsProps = {
   communityData: ICommunity;
@@ -51,11 +52,7 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
           ))}
         </Stack>
       ) : (
-        <Flex align="center" justifyContent="center">
-          <Text fontWeight="500" fontSize="16pt">
-            There are no posts yet
-          </Text>
-        </Flex>
+        <CheckMessage text="No posts yet" />
       )}
     </>
   );

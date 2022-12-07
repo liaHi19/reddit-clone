@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { Box, Flex, Spinner, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  SkeletonCircle,
+  SkeletonText,
+  Stack,
+} from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import moment from "moment";
@@ -15,6 +21,7 @@ import {
 
 import CommentInput from "./CommentInput";
 import CommentItem from "./CommentItem";
+import CheckMessage from "../../elements/CheckMessage";
 
 type CommentsProps = {
   user: User;
@@ -75,17 +82,16 @@ const Comments: React.FC<CommentsProps> = ({
         />
       </Flex>
       {loading ? (
-        <Flex align="center" justify="center">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
+        <>
+          {[0, 1, 2].map((item) => (
+            <Box key={item} padding="6" bg="white">
+              <SkeletonCircle size="10" />
+              <SkeletonText mt="4" noOfLines={2} spacing="4" />
+            </Box>
+          ))}
+        </>
       ) : comments.length > 0 ? (
-        <Stack spacing={6}>
+        <Stack spacing={6} p={2}>
           {comments.map((comment) => (
             <CommentItem
               key={comment.id}
@@ -95,11 +101,7 @@ const Comments: React.FC<CommentsProps> = ({
           ))}
         </Stack>
       ) : (
-        <Flex align="center" justifyContent="center">
-          <Text fontWeight="500" fontSize="16pt">
-            There are no comments yet
-          </Text>
-        </Flex>
+        <CheckMessage text="No Comments yet" />
       )}
     </Box>
   );
