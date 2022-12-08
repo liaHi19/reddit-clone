@@ -7,6 +7,7 @@ import {
 } from "react-hook-form";
 import { Flex, Button, Text } from "@chakra-ui/react";
 
+import { useAppSelector } from "../../../store/hooks";
 import { IPostComment } from "../../../shared/types/posts.interface";
 
 import AuthButtons from "../../Navbar/RightContent/AuthButtons";
@@ -29,6 +30,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
   formState: { errors, isValid, isDirty },
   onCreateComment,
 }) => {
+  const { edit } = useAppSelector((state) => state.dialog);
   return (
     <Flex direction="column" position="relative">
       {user ? (
@@ -62,7 +64,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
               isLoading={createLoading}
               onClick={handleSubmit(onCreateComment)}
             >
-              Comment
+              {`${edit ? "Edit" : "Comment"}`}
             </Button>
           </Flex>
         </>

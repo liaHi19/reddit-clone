@@ -31,7 +31,8 @@ export const createComment = createAsyncThunk<IComment, INewComment>(
       const postRef = doc(db, "posts", newComment.postId);
 
       batch.update(postRef, { numberOfComments: increment(1) });
-      batch.commit();
+      await batch.commit();
+
       return comment as IComment;
     } catch (error: any) {
       toast.error("Can't create a comment");
@@ -79,7 +80,7 @@ export const deletePostComment = createAsyncThunk<
     const batch = writeBatch(db);
     batch.delete(commentRef);
     batch.update(postRef, { numberOfComments: increment(-1) });
-    batch.commit();
+    await batch.commit();
 
     return commentId;
   } catch (error: any) {

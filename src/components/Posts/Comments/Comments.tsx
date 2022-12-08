@@ -69,8 +69,8 @@ const Comments: React.FC<CommentsProps> = ({
     };
     const updatedComment = { ...item, text: data.commentText, isEdited: true };
     edit ? updatePostComment(updatedComment) : createComment(newComment);
-    reset({ commentText: "" });
     edit && hideEdit();
+    reset({ commentText: "" });
   };
 
   return (

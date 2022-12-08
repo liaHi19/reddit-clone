@@ -31,6 +31,7 @@ import { IPost } from "../../shared/types/posts.interface";
 import PostIcon from "./PostIcon";
 import DeleteDialog from "../elements/DeleteDialog";
 import { useAppSelector } from "../../store/hooks";
+import { getItem } from "../../store/dialog/dialogSlice";
 
 type PostItemProps = {
   post: IPost;
@@ -51,14 +52,14 @@ const PostItem: React.FC<PostItemProps> = ({
   const cancelRef = useRef();
   const router = useRouter();
 
-  const { deletePost, showDeleteConfirm, startEdit } = useActions();
+  const { deletePost, showDeleteConfirm, getItem } = useActions();
   const { onVote } = usePosts();
 
   const { item } = useAppSelector((state) => state.dialog);
-
   const isSinglePost = !onSelectPost;
+
   const openDeleteConfirm = () => {
-    startEdit(post);
+    getItem(post);
     showDeleteConfirm();
   };
 
@@ -161,7 +162,7 @@ const PostItem: React.FC<PostItemProps> = ({
           </Flex>
         </Flex>
       </Flex>
-      {item && (
+      {item === post && (
         <DeleteDialog
           title={`Delete Post: ${item.title}`}
           onDelete={() => {

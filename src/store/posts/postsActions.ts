@@ -63,7 +63,20 @@ export const deletePost = createAsyncThunk<
     if (voteId) {
       batch.delete(doc(db, `users/${uid}/postVotes`, voteId));
     }
-    batch.commit();
+    const commentQuery = query(
+      collection(db, "comments"),
+      where("postId", "==", postId)
+    );
+
+    const postCommentsRef = await getDocs(commentQuery);
+
+    if (postCommentsRef.docs.length > 0) {
+      postCommentsRef.docs.forEach((document) =>
+        batch.delete(doc(db, "comments", document.id))
+      );
+    }
+
+    await batch.commit();
 
     toast.success("Post was successfully deleted");
 

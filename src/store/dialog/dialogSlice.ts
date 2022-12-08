@@ -34,6 +34,12 @@ const dialogSlice = createSlice({
         state.edit = false;
       }
     },
+    getItem: (state, { payload }) => {
+      state.item = payload;
+    },
+    resetItem: (state) => {
+      state.item = null;
+    },
   },
 });
 
@@ -44,5 +50,7 @@ export const {
   hideDeleteConfirm,
   startEdit,
   hideEdit,
+  getItem,
+  resetItem,
 } = dialogSlice.actions;
 export const { reducer } = dialogSlice;

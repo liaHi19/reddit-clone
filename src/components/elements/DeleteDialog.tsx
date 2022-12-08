@@ -26,10 +26,10 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
   loading,
 }) => {
   const { deleteConfirm } = useAppSelector((state) => state.dialog);
-  const { hideDeleteConfirm, hideEdit } = useActions();
+  const { hideDeleteConfirm, resetItem } = useActions();
 
   const closeConfirm = () => {
-    hideEdit();
+    resetItem();
     hideDeleteConfirm();
   };
   return (

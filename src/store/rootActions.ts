@@ -10,6 +10,8 @@ import {
   hideDeleteConfirm,
   startEdit,
   hideEdit,
+  getItem,
+  resetItem,
 } from "./dialog/dialogSlice";
 import { resetMySnippets } from "./community/communitySlice";
 import { resetPostVotes } from "./posts/postsSlice";
@@ -26,6 +28,8 @@ export const allActions = {
   hideModal,
   startEdit,
   hideEdit,
+  getItem,
+  resetItem,
   showDeleteConfirm,
   hideDeleteConfirm,
   resetMySnippets,

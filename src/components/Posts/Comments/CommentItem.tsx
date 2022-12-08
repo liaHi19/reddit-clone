@@ -21,14 +21,14 @@ type CommentItemProps = {
 };
 
 const CommentItem: React.FC<CommentItemProps> = ({ userId, comment }) => {
-  const { showModal, showDeleteConfirm, startEdit, deletePostComment } =
+  const { showDeleteConfirm, getItem, startEdit, deletePostComment } =
     useActions();
   const cancelRef = useRef();
   const { item } = useAppSelector((state) => state.dialog);
   const { deleteLoading } = useAppSelector((state) => state.comments);
 
   const openDeleteConfirm = () => {
-    startEdit(comment);
+    getItem(comment);
     showDeleteConfirm();
   };
   return (
@@ -73,7 +73,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ userId, comment }) => {
           </Stack>
         </Stack>
       </Flex>
-      {item && (
+      {item === comment && (
         <DeleteDialog
           title={`Delete Comment: ${item.text
             .split(" ")
