@@ -4,9 +4,13 @@ import React, { ReactNode } from "react";
 
 type DropDownButtonProps = {
   children: ReactNode;
+  toggleMenuItem?: () => void;
 };
 
-const DropDownButton: React.FC<DropDownButtonProps> = ({ children }) => {
+const DropDownButton: React.FC<DropDownButtonProps> = ({
+  children,
+  toggleMenuItem,
+}) => {
   return (
     <MenuButton
       cursor="pointer"
@@ -15,6 +19,7 @@ const DropDownButton: React.FC<DropDownButtonProps> = ({ children }) => {
       borderRadius={4}
       transition="0.3s ease-in-out"
       _hover={{ outline: "1px solid", outlineColor: "gray.200" }}
+      onClick={toggleMenuItem}
     >
       <Flex align="center" justify="space-between">
         <Flex align="center">{children}</Flex>

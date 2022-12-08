@@ -8,11 +8,13 @@ import { IoImageOutline } from "react-icons/io5";
 
 import { useAuth } from "../../firebase/useAuth";
 import { useActions } from "../../hooks/useActions";
+import useDirectory from "../../hooks/useDirectory";
 
 const CreatePostLink: React.FC = () => {
   const router = useRouter();
   const { user } = useAuth();
   const { handleAuthView } = useActions();
+  const { toggleMenuItem } = useDirectory();
 
   const onClick = () => {
     if (!user) {
@@ -20,7 +22,11 @@ const CreatePostLink: React.FC = () => {
       return;
     }
     const { id } = router.query;
-    router.push(`/r/${id}/submit`);
+    if (id) {
+      router.push(`/r/${id}/submit`);
+      return;
+    }
+    toggleMenuItem();
   };
 
   return (

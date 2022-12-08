@@ -23,7 +23,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
 
   useEffect(() => {
     getCurrentCommunity(router.query.id as string);
-  }, []);
+  }, [communityData]);
 
   if (!communityData) {
     return <CommunityNotFound />;

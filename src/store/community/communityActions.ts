@@ -40,7 +40,7 @@ export const joinCommunity = createAsyncThunk<
   const newSnippet: ICommunitySnippet = {
     id: communityData.id,
     imageURL: communityData.imageURL || "",
-    isModerator: false,
+    isModerator: uid === communityData.creatorId,
   };
 
   try {

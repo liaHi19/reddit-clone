@@ -13,6 +13,7 @@ import {
   getItem,
   resetItem,
 } from "./dialog/dialogSlice";
+import { toggleMenuItem, setMenuItem } from "./dialog/directorySlice";
 import { resetMySnippets } from "./community/communitySlice";
 import { resetPostVotes } from "./posts/postsSlice";
 import { resetComments } from "./comments/commentsSlice";
@@ -35,6 +36,8 @@ export const allActions = {
   resetMySnippets,
   resetPostVotes,
   resetComments,
+  toggleMenuItem,
+  setMenuItem,
   ...communityActions,
   ...postsActions,
   ...commentsActions,
