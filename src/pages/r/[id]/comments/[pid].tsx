@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 
 import { useAuth } from "../../../../firebase/useAuth";
 import { useActions } from "../../../../hooks/useActions";
-import { useAppSelector } from "../../../../store/hooks";
 import useCommunityData from "../../../../hooks/useCommunityData";
 
 import PostItem from "../../../../components/Posts/PostItem";

@@ -10,8 +10,8 @@ import { Flex, Button, Text } from "@chakra-ui/react";
 import { useAppSelector } from "../../../store/hooks";
 import { IPostComment } from "../../../shared/types/posts.interface";
 
-import AuthButtons from "../../Navbar/RightContent/AuthButtons";
 import MyTextarea from "../../elements/MyTextarea";
+import UserCheck from "../../elements/UserCheck";
 
 type CommentInputProps = {
   user: User;
@@ -73,17 +73,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
           </Flex>
         </>
       ) : (
-        <Flex
-          align="center"
-          justify="space-between"
-          borderRadius={2}
-          border="1px solid"
-          borderColor="gray.100"
-          p={4}
-        >
-          <Text fontWeight={600}>Log in or sign up to leave a comment</Text>
-          <AuthButtons />
-        </Flex>
+        <UserCheck text="Log in or sign up to leave a comment" />
       )}
     </Flex>
   );

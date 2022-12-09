@@ -7,6 +7,7 @@ import PageContent from "../../../components/Layout/PageContent";
 import NewPostForm from "../../../components/Posts/PostForm/NewPostForm";
 import useCommunityData from "../../../hooks/useCommunityData";
 import About from "../../../components/Community/About";
+import UserCheck from "../../../components/elements/UserCheck";
 
 const SubmitPostPage: NextPage = () => {
   const { user } = useAuth();
@@ -18,11 +19,13 @@ const SubmitPostPage: NextPage = () => {
         <Box padding="14px 0" borderBottom="1px solid" borderColor="white">
           <Text>Create a post</Text>
         </Box>
-        {user && (
+        {user ? (
           <NewPostForm
             user={user}
             communityImageUrl={currentCommunity?.imageURL}
           />
+        ) : (
+          <UserCheck text="Log in or sign up to create a post" />
         )}
       </>
       <>{currentCommunity && <About communityData={currentCommunity} />}</>
