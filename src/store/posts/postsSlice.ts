@@ -192,7 +192,6 @@ export const postsSlice = createSlice({
         state.posts = payload;
       })
       .addCase(getUserPostVotes.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(getUserPostVotes.fulfilled, (state, { payload }) => {

@@ -44,6 +44,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
           <MyTextarea
             name="commentText"
             placeholder="What are your thoughts?"
+            minHeight="120px"
             {...register("commentText", { required: true, maxLength: 200 })}
             errorText={errors?.commentText?.message}
             pb={10}
@@ -52,11 +53,12 @@ const CommentInput: React.FC<CommentInputProps> = ({
             position="absolute"
             left="1px"
             right={0.1}
-            bottom="-16px"
+            bottom="2px"
             justify="flex-end"
             bg="gray.100"
             p="6px 8px"
             borderRadius="0px 0px 4px 4px"
+            zIndex={5}
           >
             <Button
               height="26px"

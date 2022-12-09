@@ -101,7 +101,7 @@ const Comments: React.FC<CommentsProps> = ({
             </Box>
           ))}
         </>
-      ) : comments.length > 0 ? (
+      ) : (
         <Stack spacing={6} p={2}>
           {comments.map((comment) => (
             <CommentItem
@@ -111,9 +111,8 @@ const Comments: React.FC<CommentsProps> = ({
             />
           ))}
         </Stack>
-      ) : (
-        <CheckMessage text="No Comments yet" />
       )}
+      {!loading && !comments.length && <CheckMessage text="No Comments yet" />}
     </Box>
   );
 };
