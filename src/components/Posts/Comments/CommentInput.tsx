@@ -42,10 +42,12 @@ const CommentInput: React.FC<CommentInputProps> = ({
             </span>
           </Text>
           <MyTextarea
+            // @ts-ignore:next-line
             name="commentText"
             placeholder="What are your thoughts?"
             minHeight="120px"
             {...register("commentText", { required: true, maxLength: 200 })}
+            // @ts-ignore:next-line
             errorText={errors?.commentText?.message}
             pb={10}
           />

@@ -1,17 +1,6 @@
 import React from "react";
 import { User } from "firebase/auth";
-
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  Flex,
-  Icon,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
-} from "@chakra-ui/react";
+import { Icon, Menu, MenuDivider, MenuList } from "@chakra-ui/react";
 
 import { FaRedditSquare } from "react-icons/fa";
 import { VscAccount } from "react-icons/vsc";

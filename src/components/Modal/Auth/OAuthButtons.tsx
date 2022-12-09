@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
+import { toast } from "react-toastify";
 
-import { Flex, Button, Image, useToast } from "@chakra-ui/react";
+import { Flex, Button, Image } from "@chakra-ui/react";
 
 import { useAuth } from "../../../firebase/useAuth";
 import { createOrUpdateDoc } from "../../../firebase/firestore-helpers";
@@ -9,7 +10,6 @@ import { createOrUpdateDoc } from "../../../firebase/firestore-helpers";
 const OAuthButtons: React.FC = () => {
   const { signInWithGoogle, user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const toast = useToast();
 
   useEffect(() => {
     if (user) {
@@ -35,16 +35,8 @@ const OAuthButtons: React.FC = () => {
       await signInWithGoogle();
       setLoading(false);
     } catch (error: any) {
-      console.log("Google SignIn Error", error);
+      toast.error("Something went wrong with Google registration");
       setLoading(false);
-      toast({
-        position: "top-right",
-        title: "Google Auth Error",
-        description: "Something went wrong with Google registration",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     }
   };
 

@@ -1,6 +1,5 @@
 import React from "react";
-
-import { Button, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 import { useAuth } from "../../../firebase/useAuth";
 
@@ -10,7 +9,7 @@ import Icons from "./Icons";
 import UserMenu from "./UserMenu/UserMenu";
 
 const RightContent: React.FC = () => {
-  const { user, loading, error, logOut } = useAuth();
+  const { user, logOut } = useAuth();
   return (
     <>
       <AuthModal />

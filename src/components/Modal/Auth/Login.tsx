@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Flex, Text, useToast } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { toast } from "react-toastify";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,8 +22,6 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { handleAuthView } = useActions();
-
-  const toast = useToast();
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
@@ -45,18 +44,11 @@ const Login: React.FC = () => {
       await logIn(email, password);
       setLoading(false);
     } catch (error: any) {
-      console.log("Login Error", error);
+      toast.error(
+        FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
+          "Something went wrong with registration"
+      );
       setLoading(false);
-      toast({
-        position: "top-right",
-        title: "Login Error",
-        description:
-          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
-          "Something went wrong with registration",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     }
 
     reset();
@@ -66,17 +58,22 @@ const Login: React.FC = () => {
     <>
       <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
         <MyInput
+          // @ts-ignore:next-line
           name="email"
           {...register("email")}
+          // @ts-ignore:next-line
           label="Email"
           type="email"
           placeholder="Email"
           leftIcon={<EmailIcon color="gray.400" />}
           errorText={errors?.email?.message}
         />
+
         <MyInput
+          // @ts-ignore:next-line
           name="password"
           {...register("password")}
+          // @ts-ignore:next-line
           label="Password"
           type={showPassword ? "text" : "password"}
           placeholder="Password"

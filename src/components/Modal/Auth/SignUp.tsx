@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { AiOutlineUser } from "react-icons/ai";
-import { useToast } from "@chakra-ui/react";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -29,8 +29,6 @@ const SignUp: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { handleAuthView } = useActions();
-
-  const toast = useToast();
 
   const handlePassword = () => {
     setShowPassword((prev) => !prev);
@@ -74,18 +72,11 @@ const SignUp: React.FC = () => {
 
       setLoading(false);
     } catch (error: any) {
-      console.log("Sign Up error", error);
+      toast.error(
+        FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
+          "Something went wrong with registration"
+      );
       setLoading(false);
-      toast({
-        position: "top-right",
-        title: "Sign Up Error",
-        description:
-          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
-          "Something went wrong with registration",
-        status: "error",
-        duration: 300,
-        isClosable: true,
-      });
     }
 
     reset();
@@ -95,24 +86,30 @@ const SignUp: React.FC = () => {
     <>
       <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
         <MyInput
+          // @ts-ignore:next-line
           name="firstName"
           {...register("firstName")}
+          // @ts-ignore:next-line
           label="First Name"
           placeholder="First Name"
           leftIcon={<Icon as={AiOutlineUser} color="gray.400" />}
           errorText={errors?.firstName?.message}
         />
         <MyInput
+          // @ts-ignore:next-line
           name="lastName"
           {...register("lastName")}
+          // @ts-ignore:next-line
           label="Last Name"
           placeholder="Last Name"
           leftIcon={<Icon as={AiOutlineUser} color="gray.400" />}
           errorText={errors?.lastName?.message}
         />
         <MyInput
+          // @ts-ignore:next-line
           name="email"
           {...register("email")}
+          // @ts-ignore:next-line
           label="Email"
           type="email"
           placeholder="Email"
@@ -120,8 +117,10 @@ const SignUp: React.FC = () => {
           errorText={errors?.email?.message}
         />
         <MyInput
+          // @ts-ignore:next-line
           name="password"
           {...register("password")}
+          // @ts-ignore:next-line
           label="Password"
           type={showPassword ? "text" : "password"}
           placeholder="Password"
@@ -131,8 +130,10 @@ const SignUp: React.FC = () => {
           rightIcon={showPassword ? <ViewIcon /> : <ViewOffIcon />}
         />
         <MyInput
+          // @ts-ignore:next-line
           name="confirmPassword"
           {...register("confirmPassword")}
+          // @ts-ignore:next-line
           label="Confirm Password"
           type={showConfirmPassword ? "text" : "password"}
           placeholder="Confirm Password"

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSetRecoilState } from "recoil";
+import { toast } from "react-toastify";
 
 import { BsDot, BsReddit } from "react-icons/bs";
 import { EmailIcon } from "@chakra-ui/icons";
-import { Flex, Icon, Button, Text, useToast } from "@chakra-ui/react";
+import { Flex, Icon, Button, Text } from "@chakra-ui/react";
 
 import { IAUthInput } from "./Auth.interface";
 
@@ -26,7 +26,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
   const { resetPasswordEmail } = useAuth();
 
   const [success, setSuccess] = useState(false);
-  const toast = useToast();
 
   const {
     register,
@@ -46,20 +45,11 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
       reset();
       setSuccess(true);
     } catch (error: any) {
-      console.log("Reset Password Error", error);
+      toast.error(
+        FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
+          "Something went wrong with Sending Email"
+      );
       setLoading(false);
-
-      toast({
-        position: "top-right",
-        title: "Reset Password Error",
-        description:
-          FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS] ||
-          "Something went wrong with Sending Email",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-
       setSuccess(false);
     }
   };
@@ -80,8 +70,10 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
           </Text>
           <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
             <MyInput
+              // @ts-ignore:next-line
               name="email"
               {...register("email")}
+              // @ts-ignore:next-line
               label="Email"
               type="email"
               placeholder="Email"

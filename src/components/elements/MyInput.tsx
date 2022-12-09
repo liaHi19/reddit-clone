@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { forwardRef, InputHTMLAttributes, ReactNode } from "react";
 import {
   FormControl,
@@ -46,6 +47,7 @@ const MyInput = forwardRef<IMyInput>(
           <Input
             type={type}
             placeholder={placeholder}
+            // @ts-ignore:next-line
             ref={ref}
             {...rest}
             fontSize="10pt"

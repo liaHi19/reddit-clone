@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useRef } from "react";
-
 import { Flex, Button, Image, Stack } from "@chakra-ui/react";
 
 type ImageUploadProps = {

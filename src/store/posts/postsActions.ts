@@ -248,10 +248,13 @@ export const buildNoUserHomeFeed = createAsyncThunk<IPost[], void>(
 
 export const buildUserHomeFeed = createAsyncThunk<IPost[], void>(
   "posts/buildUserHomeFeed",
+  // @ts-ignore:next-line
   async (_, apiThunk) => {
     try {
+      // @ts-ignore:next-line
       const { mySnippets } = apiThunk.getState().community;
       if (!!mySnippets.length) {
+        // @ts-ignore:next-line
         const myCommunityIds = mySnippets.map((snippet) => snippet.id);
 
         const postQuery = query(
@@ -280,8 +283,9 @@ export const getUserPostVotes = createAsyncThunk<IPostVote[], string>(
   "posts/getUserPostVotes",
   async (uid, apiThunk) => {
     try {
+      // @ts-ignore:next-line
       const { posts } = apiThunk.getState().posts;
-
+      // @ts-ignore:next-line
       const postIds = posts.map((post) => post.id);
 
       const postVoteQuery = query(

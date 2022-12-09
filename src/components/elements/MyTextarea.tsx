@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   FormControl,
   FormErrorMessage,
@@ -19,6 +20,7 @@ const MyTextarea = forwardRef<MyTextareaProps>(
         {label && <FormLabel mb={1}>{label}</FormLabel>}
         <Textarea
           {...rest}
+          // @ts-ignore:next-line
           ref={ref}
           placeholder={placeholder}
           fontSize="10pt"

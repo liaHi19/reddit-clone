@@ -12,8 +12,6 @@ import { useActions } from "../../../hooks/useActions";
 import { IComment } from "../../../shared/types/posts.interface";
 
 import DeleteDialog from "../../elements/DeleteDialog";
-import ModalDialog from "../../elements/ModalDialog";
-import EditCommentInput from "./EditCommentInput";
 
 type CommentItemProps = {
   userId: string;

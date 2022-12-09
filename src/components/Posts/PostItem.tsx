@@ -1,5 +1,6 @@
 import React, { useState, MouseEvent, useRef } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import moment from "moment";
 import {
   Flex,
@@ -14,14 +15,7 @@ import {
 import { AiOutlineDelete } from "react-icons/ai";
 import { BsChat, BsDot } from "react-icons/bs";
 import { FaReddit } from "react-icons/fa";
-import {
-  IoArrowDownCircleOutline,
-  IoArrowDownCircleSharp,
-  IoArrowRedoOutline,
-  IoArrowUpCircleOutline,
-  IoArrowUpCircleSharp,
-  IoBookmarkOutline,
-} from "react-icons/io5";
+import { IoArrowRedoOutline, IoBookmarkOutline } from "react-icons/io5";
 import { HiArrowNarrowDown, HiArrowNarrowUp } from "react-icons/hi";
 
 import { useActions } from "../../hooks/useActions";
@@ -31,7 +25,6 @@ import { IPost } from "../../shared/types/posts.interface";
 import PostIcon from "./PostIcon";
 import DeleteDialog from "../elements/DeleteDialog";
 import { useAppSelector } from "../../store/hooks";
-import Link from "next/link";
 
 type PostItemProps = {
   post: IPost;
@@ -106,6 +99,7 @@ const PostItem: React.FC<PostItemProps> = ({
             size="xs"
             cursor="pointer"
             onClick={(event) => {
+              // @ts-ignore:next-line
               onVote(event, post, 1);
             }}
             isLoading={post.loading}
@@ -122,6 +116,7 @@ const PostItem: React.FC<PostItemProps> = ({
             size="xs"
             cursor="pointer"
             onClick={(event) => {
+              // @ts-ignore:next-line
               onVote(event, post, -1);
             }}
             isLoading={post.loading}
@@ -192,6 +187,7 @@ const PostItem: React.FC<PostItemProps> = ({
               <PostIcon
                 icon={AiOutlineDelete}
                 text="Delete"
+                // @ts-ignore:next-line
                 onOpen={(event: MouseEvent<HTMLButtonElement, MouseEvent>) => {
                   event.stopPropagation();
                   openDeleteConfirm();

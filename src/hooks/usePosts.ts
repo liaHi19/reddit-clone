@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, MouseEvent, ReactElement } from "react";
+import { useEffect, MouseEvent } from "react";
 
 import { useAuth } from "../firebase/useAuth";
 import { useAppSelector } from "../store/hooks";

@@ -29,15 +29,19 @@ const TextInputs: React.FC<TextInputsProps> = ({
   return (
     <Stack spacing={3} width="100%">
       <MyInput
+        // @ts-ignore:next-line
         name="title"
         placeholder="Title"
         {...register("title")}
+        // @ts-ignore:next-line
         errorText={errors?.title?.message}
       />
       <MyTextarea
+        // @ts-ignore:next-line
         name="body"
         placeholder="Text(Optional)"
         {...register("body")}
+        // @ts-ignore:next-line
         errorText={errors?.body?.message}
       />
       <Flex justify="flex-end">
