@@ -14,6 +14,8 @@ import CheckMessage from "../components/elements/CheckMessage";
 import PageContent from "../components/Layout/PageContent";
 import PostItem from "../components/Posts/PostItem";
 import PostLoader from "../components/Posts/PostLoader";
+import Premium from "../components/Community/Premium";
+import PersonalHome from "../components/Community/PersonalHome";
 
 const HomePage: NextPage = () => {
   const { user, loading: loadingUser } = useAuth();
@@ -75,9 +77,11 @@ const HomePage: NextPage = () => {
           <CheckMessage text="No posts yet" />
         )}
       </>
-      <>
+      <Stack spacing={5}>
         <Recommendations />
-      </>
+        <Premium />
+        {user && <PersonalHome />}
+      </Stack>
     </PageContent>
   );
 };

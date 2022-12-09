@@ -26,6 +26,7 @@ import { createDocWithSubCollection } from "../../../firebase/firestore-helpers"
 
 import CommunityCheckbox from "./CommunityCheckbox";
 import { useActions } from "../../../hooks/useActions";
+import { useAppSelector } from "../../../store/hooks";
 
 type CreateCommunityModalProps = {
   open: boolean;
@@ -45,6 +46,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const router = useRouter();
 
   const { toggleMenuItem } = useActions();
+  const { isOpen } = useAppSelector((state) => state.directory);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -102,6 +104,13 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     } catch (error: any) {
       toast.error(error.message);
       setLoading(false);
+    }
+  };
+
+  const onCloseModal = () => {
+    onClose();
+    if (isOpen) {
+      toggleMenuItem();
     }
   };
 
@@ -185,7 +194,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         </Box>
 
         <ModalFooter bg="gray.100" borderRadius="0px 0px 10px 10px">
-          <Button variant="outline" height="30px" mr={3} onClick={onClose}>
+          <Button variant="outline" height="30px" mr={3} onClick={onCloseModal}>
             Cancel
           </Button>
           <Button

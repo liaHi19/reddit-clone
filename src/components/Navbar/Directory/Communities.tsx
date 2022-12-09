@@ -1,29 +1,24 @@
 import React, { useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
+import { FaReddit } from "react-icons/fa";
 
 import { useAppSelector } from "../../../store/hooks";
+import { useActions } from "../../../hooks/useActions";
 
 import CreateCommunityModal from "../../Modal/CreateCommunity/CreateCommunityModal";
 import AddCommunity from "./AddCommunity";
 import MenuListItem from "./MenuListItem";
-import { FaReddit } from "react-icons/fa";
 
 type CommunitiesProps = {};
 
 const Communities: React.FC<CommunitiesProps> = () => {
-  const [open, setOpen] = useState(false);
   const { mySnippets } = useAppSelector((state) => state.community);
+  const { modalOpen } = useAppSelector((state) => state.dialog);
+  const { showModal, hideModal } = useActions();
 
-  const showCommunityModal = () => {
-    setOpen(true);
-  };
-
-  const hideCommunityModal = () => {
-    setOpen(false);
-  };
   return (
     <>
-      <CreateCommunityModal open={open} onClose={hideCommunityModal} />
+      <CreateCommunityModal open={modalOpen} onClose={hideModal} />
       <Box mt={3} mb={4}>
         <Text
           textTransform="uppercase"
@@ -62,7 +57,7 @@ const Communities: React.FC<CommunitiesProps> = () => {
           my communities
         </Text>
 
-        <AddCommunity onOpen={showCommunityModal} />
+        <AddCommunity onOpen={showModal} />
         {!!mySnippets.length &&
           mySnippets.map((snippet) => (
             <MenuListItem

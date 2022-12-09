@@ -1,7 +1,6 @@
 import React from "react";
 import { Flex, Icon, Menu, MenuList, Text, Image } from "@chakra-ui/react";
 
-import { TiHome } from "react-icons/ti";
 import useDirectory from "../../../hooks/useDirectory";
 
 import DropDownButton from "../../elements/DropDownButton";
