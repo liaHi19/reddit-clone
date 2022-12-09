@@ -1,17 +1,19 @@
-import { Stack } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useEffect } from "react";
-import CreatePostLink from "../components/Community/CreatePostLink";
-import CheckMessage from "../components/elements/CheckMessage";
+import { Stack } from "@chakra-ui/react";
 
-import PageContent from "../components/Layout/PageContent";
-import PostItem from "../components/Posts/PostItem";
-import PostLoader from "../components/Posts/PostLoader";
 import { useAuth } from "../firebase/useAuth";
 import { useActions } from "../hooks/useActions";
 import useCommunityData from "../hooks/useCommunityData";
 import usePosts from "../hooks/usePosts";
 import { useAppSelector } from "../store/hooks";
+
+import CreatePostLink from "../components/Community/CreatePostLink";
+import Recommendations from "../components/Community/Recommendations";
+import CheckMessage from "../components/elements/CheckMessage";
+import PageContent from "../components/Layout/PageContent";
+import PostItem from "../components/Posts/PostItem";
+import PostLoader from "../components/Posts/PostLoader";
 
 const HomePage: NextPage = () => {
   const { user, loading: loadingUser } = useAuth();
@@ -73,7 +75,9 @@ const HomePage: NextPage = () => {
           <CheckMessage text="No posts yet" />
         )}
       </>
-      <></>
+      <>
+        <Recommendations />
+      </>
     </PageContent>
   );
 };
