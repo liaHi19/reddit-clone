@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { toast } from "react-toastify";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
@@ -24,6 +25,7 @@ import { useAuth } from "../../../firebase/useAuth";
 import { createDocWithSubCollection } from "../../../firebase/firestore-helpers";
 
 import CommunityCheckbox from "./CommunityCheckbox";
+import { useActions } from "../../../hooks/useActions";
 
 type CreateCommunityModalProps = {
   open: boolean;
@@ -40,6 +42,9 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [communityType, setCommunityType] = useState("public");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const { toggleMenuItem } = useActions();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -90,8 +95,10 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         }
       );
       setLoading(false);
-      setCommunityName("");
       onClose();
+      toggleMenuItem();
+      router.push(`r/${communityName}`);
+      setCommunityName("");
     } catch (error: any) {
       toast.error(error.message);
       setLoading(false);

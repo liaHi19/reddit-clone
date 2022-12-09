@@ -12,9 +12,12 @@ import {
 } from "../shared/types/posts.interface";
 
 const usePosts = () => {
-  const { postVotes } = useAppSelector((state) => state.posts);
+  const { postVotes, selectedPost } = useAppSelector((state) => state.posts);
+  const { currentCommunity } = useAppSelector((state) => state.community);
+
   const { user } = useAuth();
   const router = useRouter();
+  const { getPostVotes } = useActions();
 
   const {
     createNewVote,
@@ -32,13 +35,18 @@ const usePosts = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!user || !currentCommunity) return;
+    getPostVotes({ uid: user?.uid!, communityId: currentCommunity.id });
+  }, [user, currentCommunity]);
+
   const onSelectPost = (post: IPost) => {
     getSelectedPost(post.id);
     router.push(`/r/${post.communityId}/comments/${post.id}`);
   };
 
   const onVote = (
-    event: MouseEvent<ReactElement, MouseEvent>,
+    event: MouseEvent<HTMLButtonElement, MouseEvent>,
     post: IPost,
     vote: number
   ) => {
@@ -74,7 +82,7 @@ const usePosts = () => {
     }
   };
 
-  return { onVote, onSelectPost };
+  return { onVote, onSelectPost, postVotes, selectedPost };
 };
 
 export default usePosts;

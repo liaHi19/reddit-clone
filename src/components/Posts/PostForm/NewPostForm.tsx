@@ -35,8 +35,12 @@ const formTabs: ITabItem[] = [
 ];
 type NewPostFormProps = {
   user: User;
+  communityImageUrl?: string;
 };
-const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
+const NewPostForm: React.FC<NewPostFormProps> = ({
+  user,
+  communityImageUrl,
+}) => {
   const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile();
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [loading, setLoading] = useState(false);
@@ -55,6 +59,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     const newPost: Omit<IPost, "id"> = {
       communityId,
       creatorId: user.uid,
+      communityImageURL: communityImageUrl || "",
       creatorDisplayName: user.displayName
         ? user.displayName
         : user.email!.split("0")[0],

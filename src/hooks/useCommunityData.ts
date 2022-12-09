@@ -17,9 +17,8 @@ const useCommunityData = () => {
     getCurrentCommunity,
   } = useActions();
   const { user } = useAuth();
-  const { mySnippets, loading, currentCommunity } = useAppSelector(
-    (state) => state.community
-  );
+  const { mySnippets, loading, currentCommunity, snippetsFetched } =
+    useAppSelector((state) => state.community);
 
   const router = useRouter();
 
@@ -55,7 +54,13 @@ const useCommunityData = () => {
     joinCommunity({ communityData, uid: user.uid });
   };
 
-  return { mySnippets, loading, joinOrLeaveCommunity };
+  return {
+    mySnippets,
+    loading,
+    joinOrLeaveCommunity,
+    currentCommunity,
+    snippetsFetched,
+  };
 };
 
 export default useCommunityData;

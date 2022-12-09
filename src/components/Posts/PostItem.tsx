@@ -8,6 +8,7 @@ import {
   Image,
   Skeleton,
   IconButton,
+  Icon,
 } from "@chakra-ui/react";
 
 import { AiOutlineDelete } from "react-icons/ai";
@@ -24,14 +25,13 @@ import {
 import { HiArrowNarrowDown, HiArrowNarrowUp } from "react-icons/hi";
 
 import { useActions } from "../../hooks/useActions";
-import usePosts from "../../hooks/usePosts";
 
 import { IPost } from "../../shared/types/posts.interface";
 
 import PostIcon from "./PostIcon";
 import DeleteDialog from "../elements/DeleteDialog";
 import { useAppSelector } from "../../store/hooks";
-import { getItem } from "../../store/dialog/dialogSlice";
+import Link from "next/link";
 
 type PostItemProps = {
   post: IPost;
@@ -39,6 +39,12 @@ type PostItemProps = {
   voteId: string;
   userVoteValue?: number;
   onSelectPost?: (post: IPost) => void;
+  onVote: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    post: IPost,
+    vote: number
+  ) => void;
+  homePage?: boolean;
 };
 
 const PostItem: React.FC<PostItemProps> = ({
@@ -47,13 +53,14 @@ const PostItem: React.FC<PostItemProps> = ({
   voteId,
   userVoteValue,
   onSelectPost,
+  onVote,
+  homePage,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const cancelRef = useRef();
   const router = useRouter();
 
   const { deletePost, showDeleteConfirm, getItem } = useActions();
-  const { onVote } = usePosts();
 
   const { item } = useAppSelector((state) => state.dialog);
   const isSinglePost = !onSelectPost;
@@ -98,7 +105,9 @@ const PostItem: React.FC<PostItemProps> = ({
             }}
             size="xs"
             cursor="pointer"
-            onClick={(event) => onVote(event, post, 1)}
+            onClick={(event) => {
+              onVote(event, post, 1);
+            }}
             isLoading={post.loading}
             aria-label={"increase votes of the posts"}
           />
@@ -112,7 +121,9 @@ const PostItem: React.FC<PostItemProps> = ({
             }}
             size="xs"
             cursor="pointer"
-            onClick={(event) => onVote(event, post, -1)}
+            onClick={(event) => {
+              onVote(event, post, -1);
+            }}
             isLoading={post.loading}
             aria-label={"decrease votes of the posts"}
           />
@@ -120,7 +131,35 @@ const PostItem: React.FC<PostItemProps> = ({
         <Flex direction="column" width="100%">
           <Stack spacing={1} p="10px">
             <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
-              {/* Homepage check */}
+              {homePage && (
+                <>
+                  {post.communityImageURL ? (
+                    <Image
+                      src={post.communityImageURL}
+                      alt={post.title}
+                      borderRadius="full"
+                      boxSize="18px"
+                      mr={2}
+                      objectFit="cover"
+                    />
+                  ) : (
+                    <Icon
+                      as={FaReddit}
+                      fontSize="10pt"
+                      mr={1}
+                      color="blue.500"
+                    />
+                  )}
+                  <Link href={`r/${post.communityId}`}>
+                    <Text
+                      fontWeight={700}
+                      _hover={{ textDecoration: "underline" }}
+                      onClick={(e) => e.stopPropagation()}
+                    >{`r/${post.communityId}`}</Text>
+                  </Link>
+                  <Icon as={BsDot} color="gray.500" fontSize={8} />
+                </>
+              )}
               <Text>
                 Posted by u/{post.creatorDisplayName}{" "}
                 {moment(post.createdAt).fromNow()}{" "}

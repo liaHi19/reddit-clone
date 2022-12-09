@@ -17,20 +17,15 @@ type PostsProps = {
 };
 
 const Posts: React.FC<PostsProps> = ({ communityData }) => {
-  const { getPosts, getPostVotes } = useActions();
-  const { posts, loading, postVotes } = useAppSelector((state) => state.posts);
+  const { getPosts } = useActions();
+  const { posts, loading } = useAppSelector((state) => state.posts);
   const { user } = useAuth();
-  const { onSelectPost } = usePosts();
+  const { onSelectPost, postVotes, onVote } = usePosts();
 
   useEffect(() => {
     if (!communityData?.id) return;
     getPosts(communityData.id);
   }, [communityData]);
-
-  useEffect(() => {
-    if (!user || !communityData.id) return;
-    getPostVotes({ uid: user?.uid!, communityId: communityData.id });
-  }, [user, communityData]);
 
   return (
     <>
@@ -48,6 +43,7 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
                 postVotes.find((vote) => vote.postId === post.id)?.voteValue
               }
               onSelectPost={onSelectPost}
+              onVote={onVote}
             />
           ))}
         </Stack>

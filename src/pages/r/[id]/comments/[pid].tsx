@@ -12,11 +12,12 @@ import Comments from "../../../../components/Posts/Comments/Comments";
 import About from "../../../../components/Community/About";
 import PageContent from "../../../../components/Layout/PageContent";
 import { User } from "firebase/auth";
+import usePosts from "../../../../hooks/usePosts";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
-  const { postVotes, selectedPost } = useAppSelector((state) => state.posts);
-  const { currentCommunity } = useAppSelector((state) => state.community);
+  const { selectedPost, postVotes, onVote } = usePosts();
+  const { currentCommunity } = useCommunityData();
   const { user } = useAuth();
   const { getSelectedPost, getPostVote } = useActions();
 
@@ -50,6 +51,7 @@ const PostPage: NextPage = () => {
               postVotes.find((vote) => vote.postId === selectedPost.id)
                 ?.voteValue
             }
+            onVote={onVote}
           />
         )}
         <Comments

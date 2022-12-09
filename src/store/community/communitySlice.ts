@@ -14,6 +14,7 @@ const initialState: ICommunityState = {
   loading: false,
   uploadingImage: false,
   mySnippets: [],
+  snippetsFetched: false,
   currentCommunity: null,
   error: null,
 };
@@ -24,6 +25,7 @@ export const communitySlice = createSlice({
   reducers: {
     resetMySnippets: (state) => {
       state.mySnippets = initialState.mySnippets;
+      state.snippetsFetched = initialState.snippetsFetched;
     },
   },
   extraReducers: (builder) => {
@@ -33,6 +35,7 @@ export const communitySlice = createSlice({
       })
       .addCase(getMySnippets.fulfilled, (state, { payload }) => {
         (state.loading = false), (state.mySnippets = payload);
+        state.snippetsFetched = true;
       })
       .addCase(joinCommunity.pending, (state) => {
         (state.loading = true), (state.error = null);

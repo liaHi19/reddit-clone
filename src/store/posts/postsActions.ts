@@ -5,6 +5,7 @@ import {
   DocumentData,
   getDocs,
   increment,
+  limit,
   orderBy,
   query,
   QueryDocumentSnapshot,
@@ -224,3 +225,79 @@ export const getPostVote = createAsyncThunk<
     return apiThunk.rejectWithValue(error.message);
   }
 });
+
+export const buildNoUserHomeFeed = createAsyncThunk<IPost[], void>(
+  "posts/buildNoUserHomeFeed",
+  async (_, apiThunk) => {
+    try {
+      const postQuery = query(
+        collection(db, "posts"),
+        orderBy("voteStatus", "desc"),
+        limit(10)
+      );
+      const postDocs = await getDocs(postQuery);
+      const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      return posts as IPost[];
+    } catch (error: any) {
+      console.log(error);
+      return apiThunk.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const buildUserHomeFeed = createAsyncThunk<IPost[], void>(
+  "posts/buildUserHomeFeed",
+  async (_, apiThunk) => {
+    try {
+      const { mySnippets } = apiThunk.getState().community;
+      if (!!mySnippets.length) {
+        const myCommunityIds = mySnippets.map((snippet) => snippet.id);
+
+        const postQuery = query(
+          collection(db, "posts"),
+          where("communityId", "in", myCommunityIds),
+          limit(10)
+        );
+        const postDocs = await getDocs(postQuery);
+        const posts = postDocs.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        return posts as IPost[];
+      } else {
+        buildNoUserHomeFeed();
+      }
+    } catch (error: any) {
+      console.log(error);
+      return apiThunk.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getUserPostVotes = createAsyncThunk<IPostVote[], string>(
+  "posts/getUserPostVotes",
+  async (uid, apiThunk) => {
+    try {
+      const { posts } = apiThunk.getState().posts;
+
+      const postIds = posts.map((post) => post.id);
+
+      const postVoteQuery = query(
+        collection(db, `users/${uid}/postVotes`),
+        where("postId", "in", postIds)
+      );
+      const postVoteDocs = await getDocs(postVoteQuery);
+      const postVotes = postVoteDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return postVotes as IPostVote[];
+    } catch (error: any) {
+      console.log(error);
+      return apiThunk.rejectWithValue(error.message);
+    }
+  }
+);

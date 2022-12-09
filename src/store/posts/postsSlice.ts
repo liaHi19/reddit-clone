@@ -4,12 +4,15 @@ import { findById } from "../../helpers/functions";
 import { IPostsState } from "./posts.interface";
 
 import {
+  buildNoUserHomeFeed,
+  buildUserHomeFeed,
   createNewVote,
   deletePost,
   getPosts,
   getPostVote,
   getPostVotes,
   getSelectedPost,
+  getUserPostVotes,
   updatePostVoteOnTwo,
   updateVoteOnOne,
 } from "./postsActions";
@@ -171,6 +174,30 @@ export const postsSlice = createSlice({
           state.selectedPost.numberOfComments =
             state.selectedPost.numberOfComments - 1;
         }
+      })
+      .addCase(buildNoUserHomeFeed.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(buildNoUserHomeFeed.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.posts = payload;
+      })
+      .addCase(buildUserHomeFeed.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(buildUserHomeFeed.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.posts = payload;
+      })
+      .addCase(getUserPostVotes.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserPostVotes.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.postVotes = payload;
       })
       .addMatcher(isError, (state, action: PayloadAction<string>) => {
         (state.loading = false), (state.error = action.payload);
