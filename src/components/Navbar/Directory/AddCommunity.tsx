@@ -13,6 +13,7 @@ const AddCommunity: React.FC<AddCommunityProps> = ({ onOpen }) => {
       fontSize="10pt"
       _hover={{ bg: "gray.100" }}
       onClick={onOpen}
+      mt={2}
     >
       <Flex align="center">
         <Icon fontSize={20} mr={2} as={GrAdd} />

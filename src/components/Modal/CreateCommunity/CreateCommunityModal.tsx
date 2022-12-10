@@ -99,7 +99,10 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       setLoading(false);
       onClose();
       toggleMenuItem();
-      router.push(`r/${communityName}`);
+      router.push({
+        pathname: "/r/[id]",
+        query: { id: communityName },
+      });
       setCommunityName("");
     } catch (error: any) {
       toast.error(error.message);

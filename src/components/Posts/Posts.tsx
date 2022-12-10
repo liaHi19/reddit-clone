@@ -31,7 +31,7 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
     <>
       {loading ? (
         <PostLoader />
-      ) : (
+      ) : posts.length > 0 ? (
         <Stack>
           {posts.map((post) => (
             <PostItem
@@ -47,8 +47,9 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
             />
           ))}
         </Stack>
+      ) : (
+        <CheckMessage text="No posts yet" />
       )}{" "}
-      {!loading && !posts.length && <CheckMessage text="No posts yet" />}
     </>
   );
 };

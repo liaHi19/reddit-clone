@@ -25,6 +25,7 @@ import { IPost } from "../../shared/types/posts.interface";
 import PostIcon from "./PostIcon";
 import DeleteDialog from "../elements/DeleteDialog";
 import { useAppSelector } from "../../store/hooks";
+import BackButton from "../elements/BackButton";
 
 type PostItemProps = {
   post: IPost;
@@ -124,6 +125,7 @@ const PostItem: React.FC<PostItemProps> = ({
           />
         </Flex>
         <Flex direction="column" width="100%">
+          {isSinglePost && <BackButton />}
           <Stack spacing={1} p="10px">
             <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
               {homePage && (

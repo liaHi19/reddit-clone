@@ -240,7 +240,6 @@ export const buildNoUserHomeFeed = createAsyncThunk<IPost[], void>(
 
       return posts as IPost[];
     } catch (error: any) {
-      console.log(error);
       return apiThunk.rejectWithValue(error.message);
     }
   }
@@ -255,12 +254,13 @@ export const buildUserHomeFeed = createAsyncThunk<IPost[], void>(
       const { mySnippets } = apiThunk.getState().community;
       if (!!mySnippets.length) {
         // @ts-ignore:next-line
-        const myCommunityIds = mySnippets.map((snippet) => snippet.id);
+        const myCommunityIds = mySnippets
+          .map((snippet) => snippet.id)
+          .slice(0, 10);
 
         const postQuery = query(
           collection(db, "posts"),
-          where("communityId", "in", myCommunityIds),
-          limit(10)
+          where("communityId", "in", myCommunityIds)
         );
         const postDocs = await getDocs(postQuery);
         const posts = postDocs.docs.map((doc) => ({
@@ -273,7 +273,6 @@ export const buildUserHomeFeed = createAsyncThunk<IPost[], void>(
         buildNoUserHomeFeed();
       }
     } catch (error: any) {
-      console.log(error);
       return apiThunk.rejectWithValue(error.message);
     }
   }
@@ -300,7 +299,6 @@ export const getUserPostVotes = createAsyncThunk<IPostVote[], string>(
 
       return postVotes as IPostVote[];
     } catch (error: any) {
-      console.log(error);
       return apiThunk.rejectWithValue(error.message);
     }
   }

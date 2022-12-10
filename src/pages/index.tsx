@@ -27,8 +27,8 @@ const HomePage: NextPage = () => {
   } = useActions();
   const { onSelectPost, postVotes, onVote } = usePosts();
   const { snippetsFetched } = useCommunityData();
-
   const { posts, loading } = useAppSelector((state) => state.posts);
+
   useEffect(() => {
     if (!user && !loadingUser) {
       buildNoUserHomeFeed();
@@ -42,7 +42,7 @@ const HomePage: NextPage = () => {
   }, [snippetsFetched]);
 
   useEffect(() => {
-    if (user && posts.length) {
+    if (user && !!posts.length) {
       getUserPostVotes(user?.uid!);
     }
     return () => {

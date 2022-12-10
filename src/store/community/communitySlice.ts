@@ -35,7 +35,9 @@ export const communitySlice = createSlice({
       })
       .addCase(getMySnippets.fulfilled, (state, { payload }) => {
         (state.loading = false), (state.mySnippets = payload);
-        state.snippetsFetched = true;
+        if (state.mySnippets.length) {
+          state.snippetsFetched = true;
+        }
       })
       .addCase(joinCommunity.pending, (state) => {
         (state.loading = true), (state.error = null);
