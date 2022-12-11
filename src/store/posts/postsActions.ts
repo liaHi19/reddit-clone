@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   collection,
@@ -250,10 +251,8 @@ export const buildUserHomeFeed = createAsyncThunk<IPost[], void>(
   // @ts-ignore:next-line
   async (_, apiThunk) => {
     try {
-      // @ts-ignore:next-line
       const { mySnippets } = apiThunk.getState().community;
       if (!!mySnippets.length) {
-        // @ts-ignore:next-line
         const myCommunityIds = mySnippets
           .map((snippet) => snippet.id)
           .slice(0, 10);
